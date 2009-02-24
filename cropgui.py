@@ -81,18 +81,21 @@ class DragManager(object):
             self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
         self.render()
 
-    def fix(self, a, b, lim):
-        a = clamp(a, 0, lim) * 1. / self.round
-        b = clamp(b, 0, lim) * 1. / self.round
-        if b < a: a, b = b, a
+    def fix(self, a, b, lim, round):
+        a, b = sorted((b,a))
+        a = clamp(a, 0, lim)
+        b = clamp(b, 0, lim)
+        if not round: return a, b
+        a *= 1. / self.round
+        b *= 1. / self.round
         a = int(math.floor(a)*self.round)
         b = int(math.ceil(b)*self.round)
         ## if image is not a multiple of round, b could end up greater than lim
         return a, min(b, lim)
 
-    def set_crop(self, top, left, right, bottom):
-        self.top, self.bottom = self.fix(top, bottom, self.h)
-        self.left, self.right = self.fix(left, right, self.w)
+    def set_crop(self, top, left, right, bottom, round=False):
+        self.top, self.bottom = self.fix(top, bottom, self.h, round)
+        self.left, self.right = self.fix(left, right, self.w, round)
         self.render()
 
     def get_image(self):
@@ -148,9 +151,6 @@ class DragManager(object):
         dx = (r - l) / 4
         dy = (b - t) / 4
 
-        print x, l, r, dx, x<l, x<l+dx, x<r-dx, x<r
-        print y, t, b, dy, y<t, y<t+dy, y<b-dy, y<b
-
         if x < l: return DRAG_NONE
         if x > r: return DRAG_NONE
         if y < t: return DRAG_NONE
@@ -173,7 +173,6 @@ class DragManager(object):
         self.x0 = event.x
         self.y0 = event.y
         self.state = self.classify(event.x, event.y)
-        print "start", self.state
 
     def motion(self, event):
         dx = event.x - self.x0; self.x0 = event.x
@@ -183,13 +182,13 @@ class DragManager(object):
         if self.state == DRAG_C:
             # A center drag bumps into the edges
             if dx > 0:
-                dx = min(dx, self.right - self.w)
+                dx = min(dx, self.w - self.right - 1)
             else:
                 dx = max(dx, -self.left)
             if dy > 0:
-                dy = min(dx, self.bottom - self.h)
+                dy = min(dy, self.h - self.bottom - 1)
             else:
-                dy = max(dx, -self.top)
+                dy = max(dy, -self.top)
         if self.state in (DRAG_TL, DRAG_T, DRAG_TR, DRAG_C):
             new_top = self.top + dy
         if self.state in (DRAG_TL, DRAG_L, DRAG_BL, DRAG_C):
@@ -207,6 +206,7 @@ class DragManager(object):
         self.set_crop(new_top, new_left, new_right, new_bottom)
 
     def end(self, event):
+        self.set_crop(self.top, self.left, self.right, self.bottom, True)
         self.state = DRAG_NONE
 
     def done(self):
@@ -238,7 +238,6 @@ def image_names():
                     (_("All files"), "*"),
                 ),
                 title=_("Select images to crop"))
-            print repr(names)
             if not names: break
             for name in names: yield name
 
@@ -268,7 +267,6 @@ for image_name in image_names():
     b *= scale
     cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
     target = base + "-crop" + ext
-    print "crop", image_name, target, cropspec
     target = open(target, "wb")
     pids.add(subprocess.Popen(
         ['jpegtran','-optimize','-progressive','-crop',cropspec,image_name],
@@ -280,6 +278,7 @@ while pids:
     sys.stdout.write("Waiting for %d children to exit.   \r" % len(pids))
     sys.stdout.flush()
     time.sleep(.1)
+sys.stdout.write(" "*79 + "\r")
 
 # 1. open image
 # 2. choose 1/2, 1/4, 1/8 scaling so that resized image fits onscreen
