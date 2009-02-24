@@ -53,7 +53,7 @@ class DragManager(object):
         self.image = None
         self.handle_size = 0
         w.configure(image=self.dummy_tkimage)
-        self.v = Tkinter.BooleanVar(app)
+        self.v = Tkinter.IntVar(app)
 
     def get_w(self): return self.image.size[0]
     w = property(get_w)
@@ -209,6 +209,9 @@ class DragManager(object):
         self.set_crop(self.top, self.left, self.right, self.bottom, True)
         self.state = DRAG_NONE
 
+    def close(self):
+        self.v.set(-1)
+
     def done(self):
         self.v.set(1)
 
@@ -217,14 +220,16 @@ class DragManager(object):
 
     def wait(self):
         app.wait_variable(self.v)
-
-
+        value = self.v.get()
+        if value == -1: raise SystemExit
+        return value
 
 
 max_h = app.winfo_screenheight() - 64 - 32
 max_w = app.winfo_screenwidth() - 64
 
 drag = DragManager(preview, do_crop, info)
+app.wm_protocol('WM_DELETE_WINDOW', drag.close)
 
 def image_names():
     if len(sys.argv) > 1:
@@ -257,7 +262,7 @@ for image_name in image_names():
     i.thumbnail((iw, ih))
     drag.image = i
     drag.round = max(1, 8/scale)
-    drag.wait()
+    if not drag.wait(): continue # user hit "next" (tba) without cropping
     
     base, ext = os.path.splitext(image_name)
     t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
