@@ -100,13 +100,8 @@ class DragManager(object):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        if not round: return a, b
-        a *= 1. / self.round
-        b *= 1. / self.round
-        a = int(math.floor(a)*self.round)
-        b = int(math.ceil(b)*self.round)
-        ## if image is not a multiple of round, b could end up greater than lim
-        return a, min(b, lim)
+        if round: a = int(math.floor(a * 1. / self.round)*self.round)
+        return a, b
 
     def set_crop(self, top, left, right, bottom, round=False):
         self.top, self.bottom = self.fix(top, bottom, self.h, round)
