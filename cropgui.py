@@ -54,6 +54,7 @@ def clamp(value, low, high):
 
 class DragManager(object):
     def __init__(self, w, b=None, inf=None):
+        self.render_flag = 0
         self.l = w
         if b: b.configure(command=self.done)
         self.inf = inf
@@ -66,7 +67,6 @@ class DragManager(object):
         self.state = DRAG_NONE
         self.round = 1
         self.image = None
-        self.handle_size = 0
         w.configure(image=self.dummy_tkimage)
         self.v = Tkinter.IntVar(app)
 
@@ -119,6 +119,13 @@ class DragManager(object):
                 "change the target of this DragManager")
 
     def render(self):
+        if not self.render_flag:
+            self.render_flag = True
+            app.after_idle(self.do_render)
+
+    def do_render(self):
+        if not self.render_flag: return
+        self.render_flag = False
         if self.image is None:
             self.l.configure(image=self.dummy_tkimage)
             return
