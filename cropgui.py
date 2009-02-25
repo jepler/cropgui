@@ -25,7 +25,9 @@ import os
 import signal
 import math
 import subprocess
-import time
+import threading
+import Queue
+import log
 
 def _(s): return s  # TODO: i18n
 
@@ -57,6 +59,48 @@ def clamp(value, low, high):
     if high < value: return high
     return value
 
+def ncpus():
+    if os.path.exists("/proc/cpuinfo"):
+        return open("/proc/cpuinfo").read().count("bogomips") or 1
+    return 1
+ncpus = ncpus()
+
+class CropTask(object):
+    def __init__(self):
+        self.tasks = Queue.Queue()
+        self.threads = set(self.create_task() for i in range(ncpus))
+        for t in self.threads: t.start()
+
+    def done(self):
+        for t in self.threads:
+            self.tasks.put(None)
+        for t in self.threads:
+            t.join()
+
+    def create_task(self):
+        return threading.Thread(target=self.runner)
+
+    def count(self):
+        return len(self.tasks) + len(self.threads)
+
+    def add(self, args, target):
+        self.tasks.put((args, target))
+
+    def runner(self):
+        while 1:
+            task = self.tasks.get()
+            if task is None:
+                break
+            args, target_name = task
+            shortname = os.path.basename(target_name)
+            target = open(target_name, "w")
+            log.progress(_("Cropping %s") % shortname)
+            subprocess.call(args, stdout=target)
+            log.log(_("Cropped %s") % shortname)
+            target.close()
+
+task = CropTask()
+
 class DragManager(object):
     def __init__(self, w, b=None, inf=None):
         self.render_flag = 0
@@ -72,10 +116,12 @@ class DragManager(object):
         w.bind("<ButtonRelease-1>", self.end)
         w.bind("<Enter>", self.enter)
         w.bind("<Leave>", self.leave)
+        app.bind("<Return>", self.double)
+        app.bind("<Escape>", self.escape)
         w.bind("<Button1-Enter>", "#nothing")
         w.bind("<Button1-Leave>", "#nothing")
-        dummy_image = Image.fromstring('RGB', (1,1), '\0\0\0')
-        self.tkimage = ImageTk.PhotoImage(dummy_image)
+        dummy_image = Image.new('L', (max_w/2,max_h/2), 0xff)
+        self.dummy_tkimage = ImageTk.PhotoImage(dummy_image)
         self.state = DRAG_NONE
         self.round = 1
         self.image = None
@@ -95,8 +141,7 @@ class DragManager(object):
             if hasattr(self, 'xor'): del self.xor
             if hasattr(self, 'tkimage'): del self.tkimage
             self._image = None
-            dummy_image = Image.new('L', (max_w, max_h), 0xff)
-            self.tkimage = ImageTk.PhotoImage(dummy_image)
+            self.l.configure(image=self.dummy_tkimage)
         else:
             self._image = image.copy()
             self.top = 0
@@ -108,6 +153,7 @@ class DragManager(object):
                 ImageFilter.SMOOTH_MORE).point([x/2 for x in range(256)] * mult)
             self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
             self.tkimage = ImageTk.PhotoImage(self._image)
+            self.l.configure(image=self.tkimage)
         self.render()
 
     def fix(self, a, b, lim):
@@ -136,7 +182,6 @@ class DragManager(object):
         if not self.render_flag: return
         self.render_flag = False
         if self.image is None:
-            self.l.configure(image=self.dummy_tkimage)
             return
 
         mask = Image.new('1', self.image.size, 0)
@@ -173,7 +218,6 @@ class DragManager(object):
 
             image = Image.composite(image, self.xor, mask)
         self.tkimage.paste(image)
-        self.l.configure(image=self.tkimage)
 
     def enter(self, event):
         self.show_handles = True
@@ -284,6 +328,12 @@ class DragManager(object):
     def close(self):
         self.v.set(-1)
 
+    def cancel(self):
+        self.v.set(0)
+
+    def escape(self, event):
+        self.cancel()
+
     def done(self):
         self.v.set(1)
 
@@ -293,7 +343,6 @@ class DragManager(object):
     def wait(self):
         app.wait_variable(self.v)
         value = self.v.get()
-        if value == -1: raise SystemExit
         return value
 
 
@@ -335,7 +384,9 @@ for image_name in image_names():
     drag.image = i
     drag.round = max(1, 8/scale)
     drag.scale = scale
-    if not drag.wait(): continue # user hit "next" (tba) without cropping
+    v = drag.wait()
+    if v == -1: break   # user closed app
+    if v == 0: continue # user hit "next" / escape
     
     base, ext = os.path.splitext(image_name)
     t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
@@ -345,18 +396,8 @@ for image_name in image_names():
     b *= scale
     cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
     target = base + "-crop" + ext
-    target = open(target, "wb")
-    pids.add(subprocess.Popen(
-        ['jpegtran','-optimize','-progressive','-crop',cropspec,image_name],
-        stdout=target))
-    target.close()
-
-while pids:
-    reap()
-    sys.stdout.write("Waiting for %d children to exit.   \r" % len(pids))
-    sys.stdout.flush()
-    time.sleep(.1)
-sys.stdout.write(" "*79 + "\r")
+    task.add(['nice', 'jpegtran', '-crop', cropspec, image_name], target)
+task.done()
 
 # 1. open image
 # 2. choose 1/2, 1/4, 1/8 scaling so that resized image fits onscreen
