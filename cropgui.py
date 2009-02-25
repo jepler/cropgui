@@ -66,7 +66,7 @@ class DragManager(object):
         self.inf = inf
         w.bind("<Button-1>", self.start)
         w.bind("<Shift-Button-1>", self.shift_start)
-        w.bind("<Double-Button-1>", self.done)
+        w.bind("<Double-Button-1>", self.double)
         w.bind("<Button1-Motion>", self.motion)
         w.bind("<Motion>", self.idle_motion)
         w.bind("<ButtonRelease-1>", self.end)
