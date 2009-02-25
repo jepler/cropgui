@@ -47,6 +47,11 @@ info.pack(side="left")
     DRAG_BL, DRAG_B, DRAG_BR
 ) = range(10)
 
+def describe_ratio(a, b):
+    if a == 0 or b == 0: return "degenerate"
+    if a > b: return "%.2f:1" % (a*1./b)
+    return "1:%.2f" % (b*1./a)
+
 def clamp(value, low, high):
     if value < low: return low
     if high < value: return high
@@ -60,12 +65,15 @@ class DragManager(object):
         if b: b.configure(command=self.done)
         self.inf = inf
         w.bind("<Button-1>", self.start)
-        w.bind("<Double-Button-1>", self.start)
+        w.bind("<Shift-Button-1>", self.shift_start)
+        w.bind("<Double-Button-1>", self.done)
         w.bind("<Button1-Motion>", self.motion)
         w.bind("<Motion>", self.idle_motion)
         w.bind("<ButtonRelease-1>", self.end)
         w.bind("<Enter>", self.enter)
         w.bind("<Leave>", self.leave)
+        w.bind("<Button1-Enter>", "#nothing")
+        w.bind("<Button1-Leave>", "#nothing")
         dummy_image = Image.fromstring('RGB', (1,1), '\0\0\0')
         self.tkimage = ImageTk.PhotoImage(dummy_image)
         self.state = DRAG_NONE
@@ -102,16 +110,16 @@ class DragManager(object):
             self.tkimage = ImageTk.PhotoImage(self._image)
         self.render()
 
-    def fix(self, a, b, lim, round):
+    def fix(self, a, b, lim):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        if round: a = int(math.floor(a * 1. / self.round)*self.round)
+        a = int(math.floor(a * 1. / self.round)*self.round)
         return a, b
 
-    def set_crop(self, top, left, right, bottom, round=False):
-        self.top, self.bottom = self.fix(top, bottom, self.h, round)
-        self.left, self.right = self.fix(left, right, self.w, round)
+    def set_crop(self, top, left, right, bottom):
+        self.top, self.bottom = self.fix(top, bottom, self.h)
+        self.left, self.right = self.fix(left, right, self.w)
         self.render()
 
     def get_image(self):
@@ -142,10 +150,11 @@ class DragManager(object):
         if self.inf:
             sc = self.scale
             ll, tt, rr, bb = l*sc, t*sc, r*sc, b*sc
+            ratio = describe_ratio(rr-ll, bb-tt)
             self.inf.configure(text=
                 "Left:  %4d  Top:    %4d    Right: %4d  Bottom: %4d\n"
-                "Width: %4d  Height: %4d    Ratio: %5.2f:1\n"
-                    % (ll, tt, rr, bb, rr-ll, bb-tt, 1.*(rr-ll)/(bb-tt)),
+                "Width: %4d  Height: %4d    Ratio: %8s\n"
+                    % (ll, tt, rr, bb, rr-ll, bb-tt, ratio),
                 font="fixed", justify="l", anchor="w")
 
         if self.show_handles:
@@ -197,10 +206,22 @@ class DragManager(object):
             if y < b-dy: return DRAG_R
             return DRAG_BR
 
-    def start(self, event):
+    def start(self, event, fixed=False):
         self.x0 = event.x
         self.y0 = event.y
+        self.t0 = self.top
+        self.l0 = self.left
+        self.r0 = self.right
+        self.b0 = self.bottom
         self.state = self.classify(event.x, event.y)
+        if self.state in (DRAG_TL, DRAG_TR, DRAG_BL, DRAG_BR):
+            self.fixed_ratio = fixed
+        else:
+            # can't drag an edge and preserve ratio (what does that mean?0
+            # dragging center always preserves ratio
+            self.fixed_ratio = False
+    def shift_start(self, event):
+        self.start(event, True)
 
     cursor_map = {
         DRAG_TL: 'top_left_corner',
@@ -219,38 +240,45 @@ class DragManager(object):
         self.l.configure(cursor=cursor)
 
     def motion(self, event):
-        dx = event.x - self.x0; self.x0 = event.x
-        dy = event.y - self.y0; self.y0 = event.y
+        dx = event.x - self.x0
+        dy = event.y - self.y0
+        if self.fixed_ratio:
+            ratio = (self.r0-self.l0) * 1. / (self.b0 - self.t0)
+            if self.state in (DRAG_TR, DRAG_BL): ratio = -ratio
+            if abs(dx/ratio) > abs(dy):
+                dy = int(round(dx / ratio))
+            else:
+                dx = int(round(dy * ratio))
         new_top, new_left, new_right, new_bottom = \
             self.top, self.left, self.right, self.bottom
         if self.state == DRAG_C:
             # A center drag bumps into the edges
             if dx > 0:
-                dx = min(dx, self.w - self.right - 1)
+                dx = min(dx, self.w - self.r0 - 1)
             else:
-                dx = max(dx, -self.left)
+                dx = max(dx, -self.l0)
             if dy > 0:
-                dy = min(dy, self.h - self.bottom - 1)
+                dy = min(dy, self.h - self.b0 - 1)
             else:
-                dy = max(dy, -self.top)
+                dy = max(dy, -self.t0)
         if self.state in (DRAG_TL, DRAG_T, DRAG_TR, DRAG_C):
-            new_top = self.top + dy
+            new_top = self.t0 + dy
         if self.state in (DRAG_TL, DRAG_L, DRAG_BL, DRAG_C):
-            new_left = self.left + dx
+            new_left = self.l0 + dx
         if self.state in (DRAG_TR, DRAG_R, DRAG_BR, DRAG_C):
-            new_right = self.right + dx
+            new_right = self.r0 + dx
         if self.state in (DRAG_BL, DRAG_B, DRAG_BR, DRAG_C):
-            new_bottom = self.bottom + dy
+            new_bottom = self.b0 + dy
         # A drag never moves left past right and so on
-        new_top = min(self.bottom, new_top)
-        new_left = min(self.right, new_left)
-        new_right = max(self.left, new_right)
-        new_bottom = max(self.top, new_bottom)
+        new_top = min(self.bottom-1, new_top)
+        new_left = min(self.right-1, new_left)
+        new_right = max(self.left+1, new_right)
+        new_bottom = max(self.top+1, new_bottom)
 
         self.set_crop(new_top, new_left, new_right, new_bottom)
 
     def end(self, event):
-        self.set_crop(self.top, self.left, self.right, self.bottom, True)
+        self.set_crop(self.top, self.left, self.right, self.bottom)
         self.state = DRAG_NONE
 
     def close(self):
