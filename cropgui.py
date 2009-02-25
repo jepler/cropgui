@@ -55,19 +55,22 @@ def clamp(value, low, high):
 class DragManager(object):
     def __init__(self, w, b=None, inf=None):
         self.render_flag = 0
+        self.show_handles = True
         self.l = w
         if b: b.configure(command=self.done)
         self.inf = inf
         w.bind("<Button-1>", self.start)
         w.bind("<Double-Button-1>", self.start)
         w.bind("<Button1-Motion>", self.motion)
+        w.bind("<Motion>", self.idle_motion)
         w.bind("<ButtonRelease-1>", self.end)
+        w.bind("<Enter>", self.enter)
+        w.bind("<Leave>", self.leave)
         dummy_image = Image.fromstring('RGB', (1,1), '\0\0\0')
-        self.dummy_tkimage = ImageTk.PhotoImage(dummy_image)
+        self.tkimage = ImageTk.PhotoImage(dummy_image)
         self.state = DRAG_NONE
         self.round = 1
         self.image = None
-        w.configure(image=self.dummy_tkimage)
         self.v = Tkinter.IntVar(app)
 
     def get_w(self): return self.image.size[0]
@@ -84,16 +87,19 @@ class DragManager(object):
             if hasattr(self, 'xor'): del self.xor
             if hasattr(self, 'tkimage'): del self.tkimage
             self._image = None
+            dummy_image = Image.new('L', (max_w, max_h), 0xff)
+            self.tkimage = ImageTk.PhotoImage(dummy_image)
         else:
             self._image = image.copy()
             self.top = 0
             self.left = 0
             self.right = self.w
             self.bottom = self.h
-            mult = len(self.image.mode)
+            mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
             self.blurred = image.copy().filter(
                 ImageFilter.SMOOTH_MORE).point([x/2 for x in range(256)] * mult)
             self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
+            self.tkimage = ImageTk.PhotoImage(self._image)
         self.render()
 
     def fix(self, a, b, lim, round):
@@ -134,34 +140,39 @@ class DragManager(object):
         dy = (b - t) / 4
 
         if self.inf:
+            sc = self.scale
+            ll, tt, rr, bb = l*sc, t*sc, r*sc, b*sc
             self.inf.configure(text=
-                "Left:  %4d  Top:    %4d\n"
-                "Right: %4d  Bottom: %4d\n"
-                "Width: %4d  Height: %4d\n"
-                "State: %s" % (l, t, r, b, r-l, b-t, self.state),
-                font="fixed")
+                "Left:  %4d  Top:    %4d    Right: %4d  Bottom: %4d\n"
+                "Width: %4d  Height: %4d    Ratio: %5.2f:1\n"
+                    % (ll, tt, rr, bb, rr-ll, bb-tt, 1.*(rr-ll)/(bb-tt)),
+                font="fixed", justify="l", anchor="w")
 
-        mask = Image.new('1', self.image.size, 1)
-        draw = ImageDraw.Draw(mask)
+        if self.show_handles:
+            mask = Image.new('1', self.image.size, 1)
+            draw = ImageDraw.Draw(mask)
 
-        draw.line([l, t, r, t], fill=0)
-        draw.line([l, b, r, b], fill=0)
-        draw.line([l, t, l, b], fill=0)
-        draw.line([r, t, r, b], fill=0)
+            draw.line([l, t, r, t], fill=0)
+            draw.line([l, b, r, b], fill=0)
+            draw.line([l, t, l, b], fill=0)
+            draw.line([r, t, r, b], fill=0)
 
-        draw.line([l+dx, t, l+dx, t+dy, l, t+dy], fill=0)
-        draw.line([r-dx, t, r-dx, t+dy, r, t+dy], fill=0)
-        draw.line([l+dx, b, l+dx, b-dy, l, b-dy], fill=0)
-        draw.line([r-dx, b, r-dx, b-dy, r, b-dy], fill=0)
+            draw.line([l+dx, t, l+dx, t+dy, l, t+dy], fill=0)
+            draw.line([r-dx, t, r-dx, t+dy, r, t+dy], fill=0)
+            draw.line([l+dx, b, l+dx, b-dy, l, b-dy], fill=0)
+            draw.line([r-dx, b, r-dx, b-dy, r, b-dy], fill=0)
 
-        image = Image.composite(image, self.xor, mask)
-        self.tkimage = ImageTk.PhotoImage(image)
+            image = Image.composite(image, self.xor, mask)
+        self.tkimage.paste(image)
         self.l.configure(image=self.tkimage)
 
     def enter(self, event):
-        pass
+        self.show_handles = True
+        self.render()
+
     def leave(self, event):
-        pass
+        self.show_handles = False
+        self.render()
 
     def classify(self, x, y):
         t, l, r, b = self.top, self.left, self.right, self.bottom
@@ -190,6 +201,22 @@ class DragManager(object):
         self.x0 = event.x
         self.y0 = event.y
         self.state = self.classify(event.x, event.y)
+
+    cursor_map = {
+        DRAG_TL: 'top_left_corner',
+        DRAG_L: 'left_side',
+        DRAG_BL: 'bottom_left_corner',
+        DRAG_TR: 'top_right_corner',
+        DRAG_R: 'right_side',
+        DRAG_BR: 'bottom_right_corner',
+        DRAG_T: 'top_side',
+        DRAG_B: 'bottom_side',
+        DRAG_C: 'fleur'}
+
+    def idle_motion(self, event):
+        what = self.classify(event.x, event.y)
+        cursor = self.cursor_map.get(what, "")
+        self.l.configure(cursor=cursor)
 
     def motion(self, event):
         dx = event.x - self.x0; self.x0 = event.x
@@ -279,6 +306,7 @@ for image_name in image_names():
     i.thumbnail((iw, ih))
     drag.image = i
     drag.round = max(1, 8/scale)
+    drag.scale = scale
     if not drag.wait(): continue # user hit "next" (tba) without cropping
     
     base, ext = os.path.splitext(image_name)
