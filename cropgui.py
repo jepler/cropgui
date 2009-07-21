@@ -404,6 +404,7 @@ try:
         drag.scale = scale
         set_busy(0)
         v = drag.wait()
+        set_busy()
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
         
