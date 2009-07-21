@@ -280,7 +280,10 @@ class DragManager(object):
 
     def idle_motion(self, event):
         what = self.classify(event.x, event.y)
-        cursor = self.cursor_map.get(what, "")
+        if busy:
+            cursor = "watch"
+        else:
+            cursor = self.cursor_map.get(what, "")
         self.l.configure(cursor=cursor)
 
     def motion(self, event):
@@ -372,7 +375,21 @@ def reap():
     global pids
     pids = set(p for p in pids if p.poll() is None)
 
+def set_busy(new_busy=True):
+    global busy
+    busy = new_busy
+    if busy:
+        drag.l.configure(cursor="watch")
+        app.configure(cursor="watch")
+        do_crop.configure(state="disabled")
+    else:
+        drag.l.configure(cursor="")
+        app.configure(cursor="")
+        do_crop.configure(state="normal")
+    app.update_idletasks()
+
 for image_name in image_names():
+    set_busy()
     i = Image.open(image_name)
     iw, ih = i.size
     scale=1
@@ -384,6 +401,7 @@ for image_name in image_names():
     drag.image = i
     drag.round = max(1, 8/scale)
     drag.scale = scale
+    set_busy(0)
     v = drag.wait()
     if v == -1: break   # user closed app
     if v == 0: continue # user hit "next" / escape
