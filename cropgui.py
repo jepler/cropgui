@@ -388,34 +388,36 @@ def set_busy(new_busy=True):
         do_crop.configure(state="normal")
     app.update_idletasks()
 
-for image_name in image_names():
-    set_busy()
-    i = Image.open(image_name)
-    iw, ih = i.size
-    scale=1
-    while iw > max_w or ih > max_h:
-        iw /= 2
-        ih /= 2
-        scale *= 2
-    i.thumbnail((iw, ih))
-    drag.image = i
-    drag.round = max(1, 8/scale)
-    drag.scale = scale
-    set_busy(0)
-    v = drag.wait()
-    if v == -1: break   # user closed app
-    if v == 0: continue # user hit "next" / escape
-    
-    base, ext = os.path.splitext(image_name)
-    t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-    t *= scale
-    l *= scale
-    r *= scale
-    b *= scale
-    cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
-    target = base + "-crop" + ext
-    task.add(['nice', 'jpegtran', '-crop', cropspec, image_name], target)
-task.done()
+try:
+    for image_name in image_names():
+        set_busy()
+        i = Image.open(image_name)
+        iw, ih = i.size
+        scale=1
+        while iw > max_w or ih > max_h:
+            iw /= 2
+            ih /= 2
+            scale *= 2
+        i.thumbnail((iw, ih))
+        drag.image = i
+        drag.round = max(1, 8/scale)
+        drag.scale = scale
+        set_busy(0)
+        v = drag.wait()
+        if v == -1: break   # user closed app
+        if v == 0: continue # user hit "next" / escape
+        
+        base, ext = os.path.splitext(image_name)
+        t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
+        t *= scale
+        l *= scale
+        r *= scale
+        b *= scale
+        cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
+        target = base + "-crop" + ext
+        task.add(['nice', 'jpegtran', '-crop', cropspec, image_name], target)
+finally:
+    task.done()
 
 # 1. open image
 # 2. choose 1/2, 1/4, 1/8 scaling so that resized image fits onscreen
