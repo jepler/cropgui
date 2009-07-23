@@ -236,7 +236,9 @@ class App:
             v = self.drag.wait()
             self.set_busy()
             if v == -1: break   # user closed app
-            if v == 0: continue # user hit "next" / escape
+            if v == 0:
+                self.log("Skipped %s" % os.path.basename(image_name))
+                continue # user hit "next" / escape
             
             base, ext = os.path.splitext(image_name)
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
