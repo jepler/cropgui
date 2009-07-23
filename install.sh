@@ -1,7 +1,8 @@
 #!/bin/sh
 if [ $# -eq 0 ]; then
     FLAVOR=gtk
-    if ! python -c 'import gtk' && python -c 'import tkinter'; then
+    if ! python -c 'import gtk' >/dev/null 2>&1 \
+                && python -c 'import tkinter' > /dev/null 2>&1; then
         FLAVOR=tk
     fi
 else
@@ -31,7 +32,7 @@ if [ $? -ne 0 ]; then exit $?; fi
 
 chmod +x $HOME/bin/cropgui
 
-if ! (cd /tmp; python -c 'import cropgui_common') 2>&1; then
+if ! (cd /tmp; python -c 'import cropgui_common') > /dev/null 2>&1; then
     echo "*** Failed to import cropgui_common.py"
     echo "    You must add $HOME/lib/python to PYTHONPATH"
     exit 1
