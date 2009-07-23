@@ -38,10 +38,13 @@ def update_preview_cb(file_chooser, preview):
                 gtk.ICON_SIZE_LARGE_TOOLBAR)
             raise
 
-def prompt_open(parent=None):
+def prompt_open(parent, first):
+    if first: cancel = gtk.STOCK_CANCEL
+    else: cancel = gtk.STOCK_QUIT
+
     dialog = gtk.FileChooserDialog("Open..", parent,
                                    gtk.FILE_CHOOSER_ACTION_OPEN,
-                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                   (cancel, gtk.RESPONSE_CANCEL,
                                     gtk.STOCK_OPEN, gtk.RESPONSE_OK))
     dialog.set_default_response(gtk.RESPONSE_OK)
     dialog.set_select_multiple(True)

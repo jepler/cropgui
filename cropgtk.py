@@ -251,8 +251,10 @@ class App:
         if len(sys.argv) > 1:
             for i in sys.argv[1:]: yield i
         else:
+            first = True
             while 1:
-                files = filechooser.prompt_open(self['window1'])
+                files = filechooser.prompt_open(self['window1'], first)
+                first = False
                 if not files: break
                 for i in files: yield i
 
