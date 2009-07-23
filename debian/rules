@@ -4,7 +4,7 @@ PREFIX=debian/tmp/usr
 
 build:; @true
 install:
-	./install.sh -t debian/tmp -p /usr
+	./install.sh -f gtk -t debian/tmp -p /usr
 
 binary-indep: install
 	(cd debian/tmp; find -not -type d) > debian/cropgui.files
