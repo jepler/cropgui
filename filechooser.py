@@ -42,7 +42,7 @@ def prompt_open(parent, first):
     if first: cancel = gtk.STOCK_CANCEL
     else: cancel = gtk.STOCK_QUIT
 
-    dialog = gtk.FileChooserDialog("Open..", parent,
+    dialog = gtk.FileChooserDialog("Select images to crop", parent,
                                    gtk.FILE_CHOOSER_ACTION_OPEN,
                                    (cancel, gtk.RESPONSE_CANCEL,
                                     gtk.STOCK_OPEN, gtk.RESPONSE_OK))
