@@ -19,7 +19,7 @@ gtk)
 tk)
     echo "Installing tkinter version of cropgui"
     cp cropgui.py $HOME/bin/cropgui && \
-    cp cropgui_common.py $HOME/lib/python
+    cp log.py cropgui_common.py $HOME/lib/python
 ;;
 *)
     echo "Unknown flavor $FLAVOR"
