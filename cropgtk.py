@@ -55,6 +55,8 @@ class DragManager(DragManagerBase):
     def __init__(self, g):
         self.g = g
         self.idle = None
+        self.busy = False
+
         DragManagerBase.__init__(self)
 
         w = g['window1']
@@ -79,7 +81,31 @@ class DragManager(DragManagerBase):
 
     def motion(self, w, event):
         x, y = self.coords(event)
-        self.drag_continue(x, y)
+        if event.state & gtk.gdk.BUTTON1_MASK:
+            self.drag_continue(x, y)
+        else:
+            self.idle_motion(x, y)
+
+    idle_cursor = gtk.gdk.Cursor(gtk.gdk.WATCH)
+    cursor_map = {
+        DRAG_TL: gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_CORNER),
+        DRAG_L: gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE),
+        DRAG_BL: gtk.gdk.Cursor(gtk.gdk.BOTTOM_LEFT_CORNER),
+        DRAG_TR: gtk.gdk.Cursor(gtk.gdk.TOP_RIGHT_CORNER),
+        DRAG_R: gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE),
+        DRAG_BR: gtk.gdk.Cursor(gtk.gdk.BOTTOM_RIGHT_CORNER),
+        DRAG_T: gtk.gdk.Cursor(gtk.gdk.TOP_SIDE),
+        DRAG_B: gtk.gdk.Cursor(gtk.gdk.BOTTOM_SIDE),
+        DRAG_C: gtk.gdk.Cursor(gtk.gdk.FLEUR)}
+
+    def idle_motion(self, x, y):
+        i = self.g['image1']
+        if not i: return
+        if self.busy: cursor = self.idle_cursor
+        else:
+            what = self.classify(x, y)
+            cursor = self.cursor_map.get(what, None)
+        i.window.set_cursor(cursor)
 
     def release(self, w, event):
         x, y = self.coords(event)
@@ -168,6 +194,7 @@ class App:
         self.glade = gtk.glade.XML(gladefile)
         self.drag = DragManager(self)
         self.task = CropTask(self)
+        self['window1'].set_title(_("CropGTK"))
 
     def __getitem__(self, name):
         return self.glade.get_widget(name)
@@ -180,13 +207,16 @@ class App:
     progress = log
 
     def set_busy(self, is_busy=True):
-        pass
+        self.drag.busy = is_busy
+        self.drag.idle_motion(*self['image1'].get_pointer())
 
     def run(self):
         drag = self.drag
         task = self.task
 
         for image_name in self.image_names():
+            self['window1'].set_title(
+                _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()
             i = Image.open(image_name)
             iw, ih = i.size
