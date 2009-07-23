@@ -249,9 +249,12 @@ class App:
 
     def image_names(self):
         if len(sys.argv) > 1:
-            return sys.argv[1:]
+            for i in sys.argv[1:]: yield i
         else:
-            return filechooser.prompt_open(self['window1'])
+            while 1:
+                files = filechooser.prompt_open(self['window1'])
+                if not files: break
+                for i in files: yield i
 
 app = App()
 try:
