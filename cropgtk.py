@@ -251,7 +251,7 @@ class App:
         if len(sys.argv) > 1:
             return sys.argv[1:]
         else:
-            return filechooser.prompt_open()
+            return filechooser.prompt_open(self['window1'])
 
 app = App()
 try:
