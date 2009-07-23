@@ -68,7 +68,7 @@ class DragManager(DragManagerBase):
         else:
             self.tkimage = ImageTk.PhotoImage(self.image)
             self.l.configure(image=self.tkimage)
-            self.do_render()
+            self.render()
 
     def render(self):
         if not self.render_flag:
@@ -84,7 +84,6 @@ class DragManager(DragManagerBase):
             self.inf.configure(text="\n\n")
             return
 
-        sc = self.scale
         ll, tt, rr, bb = self.get_corners()
         ratio = self.describe_ratio()
         self.inf.configure(text=
