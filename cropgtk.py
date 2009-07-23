@@ -185,6 +185,7 @@ class DragManager(DragManagerBase):
         self.loop = gobject.MainLoop()
         self.result = -1
         self.loop.run()
+        return self.result
 
 max_h = gtk.gdk.screen_height() - 64 - 64
 max_w = gtk.gdk.screen_width() - 64
