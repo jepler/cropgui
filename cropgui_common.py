@@ -120,8 +120,8 @@ class DragManagerBase(object):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = int(math.floor(a * 1. / self.round)*self.round)
-        return a, b
+        a = math.floor(a * 1. / self.round)*self.round
+        return int(a), int(b)
 
     def get_corners(self):
         t, l, r, b = self.top, self.left, self.right, self.bottom
@@ -149,6 +149,11 @@ class DragManagerBase(object):
         if self.image is None: return None
 
         t, l, r, b = self.top, self.left, self.right, self.bottom
+
+        assert isinstance(t, int), t
+        assert isinstance(l, int), l
+        assert isinstance(r, int), r
+        assert isinstance(b, int), b
 
         mask = Image.new('1', self.image.size, 0)
         mask.paste(1, (l, t, r, b))
