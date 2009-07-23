@@ -239,10 +239,11 @@ class DragManagerBase(object):
         if self.state in (DRAG_BL, DRAG_B, DRAG_BR, DRAG_C):
             new_bottom = self.b0 + dy
         # A drag never moves left past right and so on
-        new_top = min(self.bottom-1, new_top)
-        new_left = min(self.right-1, new_left)
-        new_right = max(self.left+1, new_right)
-        new_bottom = max(self.top+1, new_bottom)
+        if self.state != DRAG_C:
+            new_top = min(self.bottom-1, new_top)
+            new_left = min(self.right-1, new_left)
+            new_right = max(self.left+1, new_right)
+            new_bottom = max(self.top+1, new_bottom)
 
         self.set_crop(new_top, new_left, new_right, new_bottom)
 
