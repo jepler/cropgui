@@ -1,0 +1,13 @@
+Source: cropgui
+Section: graphics
+Priority: extra
+Maintainer: Jeff Epler <jepler@unpythonic.net>
+Build-Depends: python, python-support, debhelper
+XS-Python-Version: current
+Standards-Version: 2.0.0-rc
+
+Package: cropgui
+Depends: python-imaging, python-gtk2
+Section: graphics
+Architecture: all
+Description: interactive tool to losslessly resize jpeg images

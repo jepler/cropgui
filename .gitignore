@@ -3,3 +3,8 @@
 .*.sw?
 .sw?
 *-crop.jpg
+debian/tmp
+debian/cropgui
+debian/*.files
+debian/*.debhelper
+debian/*/substvars
