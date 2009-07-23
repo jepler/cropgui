@@ -15,7 +15,7 @@ image_cache = {}
 def update_preview_cb(file_chooser, preview):
     file_chooser.set_preview_widget_active(True)
     filename = file_chooser.get_preview_filename()
-    if os.path.isdir(filename):
+    if not filename or os.path.isdir(filename):
         preview.set_from_stock(gtk.STOCK_DIRECTORY, gtk.ICON_SIZE_LARGE_TOOLBAR)
     elif filename in image_cache:
         preview.set_from_pixbuf(image_cache[filename])
