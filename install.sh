@@ -31,11 +31,12 @@ while getopts "f:ut:p:P:" opt
 do
     case "$opt" in
     f) FLAVOR=$OPTARG ;;
-    u) BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python ;;
+    u) BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python; SHAREDIR=$HOME/share ;;
     t) TARGET=$OPTARG ;;
     P) PYTHON=$OPTARG ;;
     p) FPYTHON=`which $PYTHON`;
        BINDIR=`dirname $FPYTHON`;
+       SHAREDIR=`dirname $BINDIR`/share;
        LIBDIR=`site_packages $PYTHON` ;;
     *) usage ;;
     esac
@@ -43,7 +44,11 @@ done
 
 if [ -z "$FLAVOR" ]; then FLAVOR=`default_flavor`; fi
 
-mkdir -p $TARGET$BINDIR $TARGET$LIBDIR
+mkdir -p $TARGET$BINDIR $TARGET$LIBDIR $TARGET$SHAREDIR/applications \
+    $TARGET$SHAREDIR/pixmaps
+
+cp cropgui.desktop $TARGET$SHAREDIR/applications
+cp cropgui.png $TARGET$SHAREDIR/pixmaps
 
 case $FLAVOR in
 gtk)

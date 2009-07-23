@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=
+Type=Application
+Exec=/usr/bin/cropgui
+Icon=cropgui
+X-GNOME-DocPath=
+Terminal=false
+Name=cropgui
+Comment=Crop JPEG Images
+StartupNotify=false
+Categories=Application;Graphics;2DGraphics;RasterGraphics;GTK;
+MimeType=image/jpeg
