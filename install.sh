@@ -31,8 +31,9 @@ if [ $? -ne 0 ]; then exit $?; fi
 
 chmod +x $HOME/bin/cropgui
 
-if ! python -c 'import cropgui_common' 2>&1; then
-    echo "*** Failed to import cropgui_common.py: add $HOME/lib/python to PYTHONPATH"
+if ! (cd /tmp; python -c 'import cropgui_common') 2>&1; then
+    echo "*** Failed to import cropgui_common.py"
+    echo "    You must add $HOME/lib/python to PYTHONPATH"
     exit 1
 fi
 
