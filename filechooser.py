@@ -42,7 +42,7 @@ def prompt_open():
     dialog = gtk.FileChooserDialog("Open..",
                                    None,
                                    gtk.FILE_CHOOSER_ACTION_OPEN,
-                                   (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
+                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                     gtk.STOCK_OPEN, gtk.RESPONSE_OK))
     dialog.set_default_response(gtk.RESPONSE_OK)
     dialog.set_select_multiple(True)
@@ -51,6 +51,7 @@ def prompt_open():
     preview.set_size_request(PREVIEW_SIZE, PREVIEW_SIZE)
 
     dialog.set_preview_widget(preview)
+    dialog.set_preview_widget_active(True)
     dialog.connect("update-preview", update_preview_cb, preview)
 
     filter = gtk.FileFilter()
