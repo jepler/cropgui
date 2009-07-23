@@ -8,6 +8,8 @@ else
     FLAVOR=$1
 fi
 
+mkdir -p $HOME/lib/python $HOME/bin
+
 case $FLAVOR in
 gtk)
     echo "Installing gtk version of cropgui"
