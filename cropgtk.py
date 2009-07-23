@@ -208,7 +208,9 @@ class App:
 
     def set_busy(self, is_busy=True):
         self.drag.busy = is_busy
-        self.drag.idle_motion(*self['image1'].get_pointer())
+        i = self['image1']
+        if i:
+            self.drag.idle_motion(*i.get_pointer())
 
     def run(self):
         drag = self.drag
