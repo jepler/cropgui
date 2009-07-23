@@ -1,10 +1,41 @@
 #!/bin/sh
-cp cropgtk.py $HOME/bin/cropgui
-cp cropgui_common.py filechooser.py $HOME/lib/python
-if ! python -c 'import filechooser' 2>&1; then
-    echo "Failed to import filechooser.py: add $HOME/lib/python to PYTHONPATH"
+if [ $# -eq 0 ]; then
+    FLAVOR=gtk
+    if ! python -c 'import gtk' && python -c 'import tkinter'; then
+        FLAVOR=tk
+    fi
+else
+    FLAVOR=$1
 fi
+
+case $FLAVOR in
+gtk)
+    echo "Installing gtk version of cropgui"
+    cp cropgtk.py $HOME/bin/cropgui && \
+    cp cropgui_common.py filechooser.py cropgui.glade $HOME/lib/python
+;;
+tk)
+    echo "Installing tkinter version of cropgui"
+    cp cropgui.py $HOME/bin/cropgui && \
+    cp cropgui_common.py $HOME/lib/python
+;;
+*)
+    echo "Unknown flavor $FLAVOR"
+    exit 1
+;;
+esac
+
+if [ $? -ne 0 ]; then exit $?; fi
+
 chmod +x $HOME/bin/cropgui
+
+if ! python -c 'import cropgui_common' 2>&1; then
+    echo "*** Failed to import cropgui_common.py: add $HOME/lib/python to PYTHONPATH"
+    exit 1
+fi
+
+echo "Installed cropgui $FLAVOR"
+
 #    installation script for cropgui, a graphical front-end for lossless jpeg
 #    cropping
 #    Copyright (C) 2009 Jeff Epler <jepler@unpythonic.net>
