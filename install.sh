@@ -1,8 +1,8 @@
 #!/bin/sh
-cp cropgui.py $HOME/bin/cropgui
-cp log.py cropgui_common.py $HOME/lib/python
-if ! python -c 'import log' 2>&1; then
-    echo "Failed to import log.py: add $HOME/lib/python to PYTHONPATH"
+cp cropgtk.py $HOME/bin/cropgui
+cp cropgui_common.py filechooser.py $HOME/lib/python
+if ! python -c 'import filechooser' 2>&1; then
+    echo "Failed to import filechooser.py: add $HOME/lib/python to PYTHONPATH"
 fi
 chmod +x $HOME/bin/cropgui
 #    installation script for cropgui, a graphical front-end for lossless jpeg
