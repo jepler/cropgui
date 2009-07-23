@@ -1,26 +1,60 @@
 #!/bin/sh
-if [ $# -eq 0 ]; then
-    FLAVOR=gtk
-    if ! python -c 'import gtk' >/dev/null 2>&1 \
-                && python -c 'import tkinter' > /dev/null 2>&1; then
-        FLAVOR=tk
-    fi
-else
-    FLAVOR=$1
-fi
+PYTHON=python
+BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python
 
-mkdir -p $HOME/lib/python $HOME/bin
+default_flavor () {
+    if ! $PYTHON -c 'import gtk' >/dev/null 2>&1 \
+                && $PYTHON -c 'import tkinter' > /dev/null 2>&1; then
+        echo tk
+    else
+        echo gtk
+    fi
+}
+
+site_packages () {
+    $PYTHON -c 'import distutils.sysconfig; print distutils.sysconfig.get_python_lib()'
+}
+
+usage () {
+    cat <<EOF
+Usage: ./install.sh [-f tk|gtk] [-u|-p PREFIX] [-P PYTHON] [-t TARGET]
+    -f: choose the flavor to install
+    -u: install to $HOME
+    -p: install to $PREFIX
+    -P: Python executable to use
+    -t: install inside TARGET (for package building)
+EOF
+    exit
+}
+
+while getopts "f:ut:p:P:" opt
+do
+    case "$opt" in
+    f) FLAVOR=$OPTARG ;;
+    u) BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python ;;
+    t) TARGET=$OPTARG ;;
+    P) PYTHON=$OPTARG ;;
+    p) FPYTHON=`which $PYTHON`;
+       BINDIR=`dirname $FPYTHON`;
+       LIBDIR=`site_packages $PYTHON` ;;
+    *) usage ;;
+    esac
+done
+
+if [ -z "$FLAVOR" ]; then FLAVOR=`default_flavor`; fi
+
+mkdir -p $TARGET$BINDIR $TARGET$LIBDIR
 
 case $FLAVOR in
 gtk)
     echo "Installing gtk version of cropgui"
-    cp cropgtk.py $HOME/bin/cropgui && \
-    cp cropgui_common.py filechooser.py cropgui.glade $HOME/lib/python
+    cp cropgtk.py $TARGET$BINDIR/cropgui && \
+    cp cropgui_common.py filechooser.py cropgui.glade $TARGET$LIBDIR
 ;;
 tk)
     echo "Installing tkinter version of cropgui"
-    cp cropgui.py $HOME/bin/cropgui && \
-    cp log.py cropgui_common.py $HOME/lib/python
+    cp cropgui.py $TARGET$BINDIR/cropgui && \
+    cp log.py cropgui_common.py $TARGET$LIBDIR
 ;;
 *)
     echo "Unknown flavor $FLAVOR"
@@ -30,11 +64,11 @@ esac
 
 if [ $? -ne 0 ]; then exit $?; fi
 
-chmod +x $HOME/bin/cropgui
+chmod +x $TARGET$BINDIR/cropgui
 
-if ! (cd /tmp; python -c 'import cropgui_common') > /dev/null 2>&1; then
+if [ -z "$TARGET" ] && ! (cd /tmp; python -c 'import cropgui_common') > /dev/null 2>&1; then
     echo "*** Failed to import cropgui_common.py"
-    echo "    You must add $HOME/lib/python to PYTHONPATH"
+    echo "    You must add $LIBDIR to PYTHONPATH"
     exit 1
 fi
 
