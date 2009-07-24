@@ -1,6 +1,6 @@
 #!/bin/sh
 PYTHON=python
-BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python
+BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python SHAREDIR=$HOME/share
 
 default_flavor () {
     if ! $PYTHON -c 'import gtk' >/dev/null 2>&1 \
