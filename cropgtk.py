@@ -187,8 +187,9 @@ class DragManager(DragManagerBase):
         self.loop.run()
         return self.result
 
-max_h = gtk.gdk.screen_height() - 64 - 64
+max_h = gtk.gdk.screen_height() - 64*3
 max_w = gtk.gdk.screen_width() - 64
+max_sz = min(max_w, max_h)
 
 class App:
     def __init__(self):
@@ -225,7 +226,7 @@ class App:
                 i = Image.open(image_name)
                 iw, ih = i.size
                 scale = 1
-                while iw > max_w or ih > max_h:
+                while iw > max_sz or ih > max_sz:
                     iw /= 2
                     ih /= 2
                     scale *= 2
