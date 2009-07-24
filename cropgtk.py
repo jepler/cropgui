@@ -134,6 +134,8 @@ class DragManager(DragManagerBase):
     def key(self, w, e):
         if e.keyval == gtk.keysyms.Escape: self.escape()
         elif e.keyval == gtk.keysyms.Return: self.done()
+        elif e.string in ',<': self.rotate_ccw()
+        elif e.string in '.>': self.rotate_cw()
 
     def image_set(self):
         self.render()
