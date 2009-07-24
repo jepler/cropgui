@@ -9,6 +9,14 @@ import gobject
 
 import os
 import Image
+import cropgui_common
+
+def apply_rotation(rotation, image):
+    print "apply_rotation", rotation
+    if rotation == 3: return image.transpose(Image.ROTATE_180)
+    if rotation == 6: return image.transpose(Image.ROTATE_270)
+    if rotation == 8: return image.transpose(Image.ROTATE_90)
+    return image
 
 HIGH_WATER, LOW_WATER = 25, 5
 image_cache = {}
@@ -22,8 +30,10 @@ def update_preview_cb(file_chooser, preview):
     else:
         try:
             i = Image.open(filename)
+            r = cropgui_common.image_rotation(i)
             i.thumbnail((PREVIEW_SIZE, PREVIEW_SIZE), Image.ANTIALIAS)
             i = i.convert('RGB')
+            i = apply_rotation(r, i)
             pixbuf = gtk.gdk.pixbuf_new_from_data(i.tostring(), 
                 gtk.gdk.COLORSPACE_RGB, 0, 8, i.size[0], i.size[1],
                 i.size[0]*3)
