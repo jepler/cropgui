@@ -22,6 +22,12 @@ import Queue
 import os
 import math
 
+def getoutput(c):
+    p = subprocess.Popen(c, shell=isinstance(c, str), stdout=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    return stdout
+
+
 def _(s): return s  # TODO: i18n
 
 (
