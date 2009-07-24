@@ -332,3 +332,24 @@ def image_rotation(i):
     result = exif.get(0x112, None)
     print "image_rotation", result
     return result or 1
+
+_desktop_name = None
+def desktop_name():
+    global _desktop_name
+    if not _desktop_name:
+        _desktop_name = getoutput("""
+            test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && . ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
+            echo -n ${XDG_DESKTOP_DIR:-$HOME/Desktop}""")
+        if (not os.path.isdir(_desktop_name)
+                or not os.access(_desktop_name, os.W_OK)):
+            _desktop_name = os.expanduser("~")
+    return _desktop_name
+
+def output_name(image_name):
+    dirname = os.path.dirname(image_name)
+    basename = os.path.basename(image_name)
+    if not os.access(dirname, os.W_OK):
+        image_name = os.path.join(desktop_name(), basename)
+    base, ext = os.path.splitext(image_name)
+    target = base + "-crop.jpg"
+    return target
