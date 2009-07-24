@@ -221,14 +221,24 @@ class App:
             self['window1'].set_title(
                 _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()
-            i = Image.open(image_name)
-            iw, ih = i.size
-            scale = 1
-            while iw > max_w or ih > max_h:
-                iw /= 2
-                ih /= 2
-                scale *= 2
-            i.thumbnail((iw, ih))
+            try:
+                i = Image.open(image_name)
+                iw, ih = i.size
+                scale = 1
+                while iw > max_w or ih > max_h:
+                    iw /= 2
+                    ih /= 2
+                    scale *= 2
+                i.thumbnail((iw, ih))
+            except (IOError,), detail:
+                m = gtk.MessageDialog(self['window1'],
+                    gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                    gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
+                    "Could not open %s: %s" % (image_name, detail))
+                m.show()
+                m.run()
+                m.destroy()
+                continue
             drag.image = i
             drag.round = max(1, 8/scale)
             drag.scale = scale
