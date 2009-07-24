@@ -24,7 +24,7 @@ import math
 
 def _(s): return s  # TODO: i18n
 
-(   
+(
     DRAG_NONE,
     DRAG_TL, DRAG_T, DRAG_TR,
     DRAG_L,  DRAG_C, DRAG_R,
