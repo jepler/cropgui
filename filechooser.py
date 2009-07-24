@@ -38,45 +38,46 @@ def update_preview_cb(file_chooser, preview):
                 gtk.ICON_SIZE_LARGE_TOOLBAR)
             raise
 
-def prompt_open(parent, first):
-    if first: cancel = gtk.STOCK_CANCEL
-    else: cancel = gtk.STOCK_QUIT
+class Chooser:
+    def __init__(self, parent):
+        self.dialog = dialog = \
+            gtk.FileChooserDialog("Select images to crop",
+                                  parent,
+                                  gtk.FILE_CHOOSER_ACTION_OPEN,
+                                  (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
+                                   gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_select_multiple(True)
 
-    dialog = gtk.FileChooserDialog("Select images to crop", parent,
-                                   gtk.FILE_CHOOSER_ACTION_OPEN,
-                                   (cancel, gtk.RESPONSE_CANCEL,
-                                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-    dialog.set_default_response(gtk.RESPONSE_OK)
-    dialog.set_select_multiple(True)
+        preview = gtk.Image()
+        preview.set_size_request(PREVIEW_SIZE, PREVIEW_SIZE)
 
-    preview = gtk.Image()
-    preview.set_size_request(PREVIEW_SIZE, PREVIEW_SIZE)
+        dialog.set_preview_widget(preview)
+        dialog.set_preview_widget_active(True)
+        dialog.connect("update-preview", update_preview_cb, preview)
 
-    dialog.set_preview_widget(preview)
-    dialog.set_preview_widget_active(True)
-    dialog.connect("update-preview", update_preview_cb, preview)
+        filter = gtk.FileFilter()
+        filter.set_name("JPEG Images")
+        filter.add_mime_type("image/jpeg")
+        filter.add_pattern("*.jpg")
+        filter.add_pattern("*.jpeg")
+        filter.add_pattern("*.JPG")
+        filter.add_pattern("*.JPEG")
+        dialog.add_filter(filter)
 
-    filter = gtk.FileFilter()
-    filter.set_name("JPEG Images")
-    filter.add_mime_type("image/jpeg")
-    filter.add_pattern("*.jpg")
-    filter.add_pattern("*.jpeg")
-    filter.add_pattern("*.JPG")
-    filter.add_pattern("*.JPEG")
-    dialog.add_filter(filter)
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        dialog.add_filter(filter)
 
-    filter = gtk.FileFilter()
-    filter.set_name("All files")
-    filter.add_pattern("*")
-    dialog.add_filter(filter)
-
-    response = dialog.run()
-    if response == gtk.RESPONSE_OK:
-        result = dialog.get_filenames()
-    else:
-        result = []
-    dialog.destroy()
-    return result
+    def run(self):
+        self.dialog.show()
+        response = self.dialog.run()
+        self.dialog.hide()
+        if response == gtk.RESPONSE_OK:
+            return self.dialog.get_filenames()
+        else:
+            return []
 
 if __name__ == '__main__':
     print prompt_open()

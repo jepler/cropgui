@@ -251,13 +251,12 @@ class App:
             task.add(['nice', 'jpegtran', '-crop', cropspec, image_name], target)
 
     def image_names(self):
+        c = filechooser.Chooser(self['window1'])
         if len(sys.argv) > 1:
             for i in sys.argv[1:]: yield i
         else:
-            first = True
             while 1:
-                files = filechooser.prompt_open(self['window1'], first)
-                first = False
+                files = c.run()
                 if not files: break
                 for i in files: yield i
 
