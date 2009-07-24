@@ -284,19 +284,6 @@ class DragManagerBase(object):
         self.set_crop(self.top, self.left, self.right, self.bottom)
         self.state = DRAG_NONE
 
-    rotate_compositions = [None,
-             # 1  2  3  4  5  6  7  8
-        [None, 1, 2, 3, 4, 5, 6, 7, 8],  # 1
-        [None, 2, 0, 0, 0, 0, 0, 0, 0],  # 2
-        [None, 3, 0, 1, 0, 0, 8, 0, 6],  # 3
-        [None, 4, 0, 0, 0, 0, 0, 0, 0],  # 4
-        [None, 5, 0, 0, 0, 0, 0, 0, 0],  # 5
-        [None, 6, 0, 8, 0, 0, 3, 0, 1],  # 6
-        [None, 7, 0, 0, 0, 0, 0, 0, 0],  # 7
-        [None, 8, 0, 6, 0, 0, 1, 0, 3],  # 8
-        [None, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
     def rotate_ccw(self):
         r = self.rotation
         if   r == 1: r = 6
@@ -315,8 +302,6 @@ class DragManagerBase(object):
 
     inverse = {1: 1, 3:3, 6:8, 8:6}
 
-    def perform_rotation(self, r):
-        if r == 1: return
     def set_rotation(self, rotation):
         if rotation not in (1, 3, 6, 8):
             raise ValueError, 'Unsupported rotation %r' % rotation
