@@ -22,7 +22,6 @@ def update_preview_cb(file_chooser, preview):
     else:
         try:
             i = Image.open(filename)
-            w, h = i.size
             i.thumbnail((PREVIEW_SIZE, PREVIEW_SIZE), Image.ANTIALIAS)
             i = i.convert('RGB')
             pixbuf = gtk.gdk.pixbuf_new_from_data(i.tostring(), 
