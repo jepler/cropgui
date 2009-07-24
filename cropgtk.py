@@ -149,7 +149,6 @@ class DragManager(DragManagerBase):
             pixbuf = gtk.gdk.pixbuf_new_from_data('\0\0\0',
                 gtk.gdk.COLORSPACE_RGB, 0, 8, 1, 1, 3)
             i.set_from_pixbuf(pixbuf)
-            #i.set_size_request(max_w, max_h)
             g['pos_left'].set_text('---')
             g['pos_right'].set_text('---')
             g['pos_top'].set_text('---')
