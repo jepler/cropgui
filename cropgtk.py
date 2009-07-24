@@ -70,6 +70,13 @@ class DragManager(DragManagerBase):
         w.connect('key-press-event', self.key)
         g['toolbutton1'].connect('clicked', self.done)
         g['toolbutton2'].connect('clicked', self.escape)
+        g['toolbutton3'].connect('clicked', self.ccw)
+        g['toolbutton4'].connect('clicked', self.cw)
+
+    def ccw(self, event):
+        self.rotate_ccw()
+    def cw(self, event):
+        self.rotate_cw()
 
     def coords(self, event):
         return event.x, event.y
@@ -241,6 +248,7 @@ class App:
                 m.destroy()
                 continue
             drag.image = i
+            drag.rotation = image_rotation(i)
             drag.round = max(1, 8/scale)
             drag.scale = scale
             self.set_busy(0)
@@ -259,7 +267,13 @@ class App:
             b *= scale
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             target = base + "-crop" + ext
-            task.add(['nice', 'jpegtran', '-crop', cropspec, image_name], target)
+            command = ['nice', 'jpegtran']
+            if   drag.rotation == 3: command.extend(['-rotate', '180'])
+            elif drag.rotation == 6: command.extend(['-rotate', '90'])
+            elif drag.rotation == 8: command.extend(['-rotate', '270'])
+            command.extend(['-crop', cropspec, image_name])
+            print " ".join(command)
+            task.add(command, target)
 
     def image_names(self):
         c = filechooser.Chooser(self['window1'])
