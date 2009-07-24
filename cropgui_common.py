@@ -104,15 +104,28 @@ class DragManagerBase(object):
             if hasattr(self, 'xor'): del self.xor
             self._image = None
         else:
-            self._image = image.copy()
-            self.top = 0
-            self.left = 0
-            self.right = self.w
-            self.bottom = self.h
-            mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
-            self.blurred = image.copy().filter(
-                ImageFilter.SMOOTH_MORE).point([x/2 for x in range(256)] * mult)
-            self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
+            self._orig_image = image.copy()
+            self._rotation = 1
+            self.image_or_rotation_changed()
+
+    def apply_rotation(self, image):
+        if self.rotation == 1: return image.copy()
+        if self.rotation == 3: return image.transpose(Image.ROTATE_180)
+        if self.rotation == 6: return image.transpose(Image.ROTATE_270)
+        if self.rotation == 8: return image.transpose(Image.ROTATE_90)
+
+    def image_or_rotation_changed(self):
+        self._image = image = self.apply_rotation(self._orig_image)
+        self.apply_rotation(image)
+        self.top = 0
+        self.left = 0
+        self.right = self.w
+        self.bottom = self.h
+        blurred = image.copy()
+        mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
+        self.blurred = image.copy().filter(
+            ImageFilter.SMOOTH_MORE).point([x/2 for x in range(256)] * mult)
+        self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
         self.image_set()
         self.render()
 
@@ -270,3 +283,61 @@ class DragManagerBase(object):
     def drag_end(self, x, y):
         self.set_crop(self.top, self.left, self.right, self.bottom)
         self.state = DRAG_NONE
+
+    rotate_compositions = [None,
+             # 1  2  3  4  5  6  7  8
+        [None, 1, 2, 3, 4, 5, 6, 7, 8],  # 1
+        [None, 2, 0, 0, 0, 0, 0, 0, 0],  # 2
+        [None, 3, 0, 1, 0, 0, 8, 0, 6],  # 3
+        [None, 4, 0, 0, 0, 0, 0, 0, 0],  # 4
+        [None, 5, 0, 0, 0, 0, 0, 0, 0],  # 5
+        [None, 6, 0, 8, 0, 0, 3, 0, 1],  # 6
+        [None, 7, 0, 0, 0, 0, 0, 0, 0],  # 7
+        [None, 8, 0, 6, 0, 0, 1, 0, 3],  # 8
+        [None, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+
+    def rotate_ccw(self):
+        r = self.rotation
+        if   r == 1: r = 6
+        elif r == 6: r = 3
+        elif r == 3: r = 8
+        elif r == 8: r = 1
+        self.rotation = r
+
+    def rotate_cw(self):
+        r = self.rotation
+        if   r == 6: r = 1
+        elif r == 3: r = 6
+        elif r == 8: r = 3
+        elif r == 1: r = 8
+        self.rotation = r
+
+    inverse = {1: 1, 3:3, 6:8, 8:6}
+
+    def perform_rotation(self, r):
+        if r == 1: return
+    def set_rotation(self, rotation):
+        if rotation not in (1, 3, 6, 8):
+            raise ValueError, 'Unsupported rotation %r' % rotation
+
+        print "rotation", self.rotation, "->", rotation
+        self._rotation = rotation
+        self.image_or_rotation_changed()
+
+    def get_rotation(self):
+        return self._rotation
+    rotation = property(get_rotation, set_rotation, None,
+            'Set image rotation')
+
+def image_rotation(i):
+    if not hasattr(i, '_getexif'):
+        print "no getexif?", type(i), getattr(i, '_getexif', None)
+        return 1
+    exif = i._getexif()
+    if not isinstance(exif, dict):
+        print "not dict?", repr(exif)
+        return 1
+    result = exif.get(0x112, None)
+    print "image_rotation", result
+    return result or 1
