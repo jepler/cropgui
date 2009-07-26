@@ -1,4 +1,20 @@
-cropgui (0) unstable; urgency=low
+cropgui (0.2) hardy; urgency=low
+
+  * remember directory for 'open' file choosers
+  * handle corrupt or unreadable images better
+  * allow interactive image rotation
+  * use exif image orientation by default
+  * prompt user for save location when it's unwritable 
+
+ -- Jeff Epler <jepler@unpythonic.net>  Sun, 26 Jul 2009 12:18:52 -0500
+
+cropgui (0.1.1) hardy; urgency=low
+
+  * fix dash-compatability of build script 
+
+ -- Jeff Epler <jepler@unpythonic.net>  Sun, 26 Jul 2009 12:18:37 -0500
+
+cropgui (0.1) unstable; urgency=low
 
   * Initial release.
 
