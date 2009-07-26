@@ -205,6 +205,7 @@ class App:
         self.glade = gtk.glade.XML(gladefile)
         self.drag = DragManager(self)
         self.task = CropTask(self)
+        self.dirchooser = None
         self['window1'].set_title(_("CropGTK"))
 
     def __getitem__(self, name):
@@ -272,19 +273,41 @@ class App:
             elif drag.rotation == 6: command.extend(['-rotate', '90'])
             elif drag.rotation == 8: command.extend(['-rotate', '270'])
             command.extend(['-crop', cropspec, image_name])
-            target = output_name(image_name)
+            target = self.output_name(image_name)
+            if not target:
+                self.log("Skipped %s" % os.path.basename(image_name))
+                continue # user hit "cancel" on save dialog
             print " ".join(command), ">", target
             task.add(command, target)
 
     def image_names(self):
-        c = filechooser.Chooser(self['window1'])
         if len(sys.argv) > 1:
             for i in sys.argv[1:]: yield i
         else:
+            c = filechooser.Chooser(self['window1'], _("Select images to crop"))
             while 1:
                 files = c.run()
                 if not files: break
                 for i in files: yield i
+
+    def output_name(self, image_name):
+        d = os.path.dirname(image_name)
+        i = os.path.basename(image_name)
+        j = os.path.splitext(i)[0].lower() + "-crop.jpg"
+        if os.access(d, os.W_OK): return os.path.join(d, j)
+        title = _('Save cropped version of %s') % i
+        if self.dirchooser is None:
+            self.dirchooser = filechooser.DirChooser(self['window1'], title)
+            self.dirchooser.set_current_folder(desktop_name())
+        else:
+            self.dirchooser.set_title(title)
+        self.dirchooser.set_current_name(j)
+        r = self.dirchooser.run()
+        if not r: return ''
+        r = r[0]
+        e = os.path.splitext(r)[1]
+        if e.lower() in ['.jpg', '.jpeg']: return r
+        return e + ".jpg"
 
 app = App()
 try:

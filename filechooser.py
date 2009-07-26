@@ -47,37 +47,10 @@ def update_preview_cb(file_chooser, preview):
                 gtk.ICON_SIZE_LARGE_TOOLBAR)
             raise
 
-class Chooser:
-    def __init__(self, parent):
+class BaseChooser:
+    def __init__(self, title, parent):
         self.dialog = dialog = \
-            gtk.FileChooserDialog("Select images to crop",
-                                  parent,
-                                  gtk.FILE_CHOOSER_ACTION_OPEN,
-                                  (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
-                                   gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
-        dialog.set_select_multiple(True)
-
-        preview = gtk.Image()
-        preview.set_size_request(PREVIEW_SIZE, PREVIEW_SIZE)
-
-        dialog.set_preview_widget(preview)
-        dialog.set_preview_widget_active(True)
-        dialog.connect("update-preview", update_preview_cb, preview)
-
-        filter = gtk.FileFilter()
-        filter.set_name("JPEG Images")
-        filter.add_mime_type("image/jpeg")
-        filter.add_pattern("*.jpg")
-        filter.add_pattern("*.jpeg")
-        filter.add_pattern("*.JPG")
-        filter.add_pattern("*.JPEG")
-        dialog.add_filter(filter)
-
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        dialog.add_filter(filter)
+            gtk.FileChooserDialog(title, parent, self.mode, self.buttons)
 
     def run(self):
         self.dialog.show()
@@ -87,6 +60,56 @@ class Chooser:
             return self.dialog.get_filenames()
         else:
             return []
+
+class Chooser(BaseChooser):
+    mode = gtk.FILE_CHOOSER_ACTION_OPEN
+    buttons = (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
+               gtk.STOCK_OPEN, gtk.RESPONSE_OK)
+
+    def __init__(self, title, parent):
+        BaseChooser.__init__(self, parent, title)
+
+        self.dialog.set_default_response(gtk.RESPONSE_OK)
+        self.dialog.set_select_multiple(True)
+
+        preview = gtk.Image()
+        preview.set_size_request(PREVIEW_SIZE, PREVIEW_SIZE)
+
+        self.dialog.set_preview_widget(preview)
+        self.dialog.set_preview_widget_active(True)
+        self.dialog.connect("update-preview", update_preview_cb, preview)
+
+        filter = gtk.FileFilter()
+        filter.set_name("JPEG Images")
+        filter.add_mime_type("image/jpeg")
+        filter.add_pattern("*.jpg")
+        filter.add_pattern("*.jpeg")
+        filter.add_pattern("*.JPG")
+        filter.add_pattern("*.JPEG")
+        self.dialog.add_filter(filter)
+
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        self.dialog.add_filter(filter)
+
+class DirChooser(BaseChooser):
+    mode = gtk.FILE_CHOOSER_ACTION_SAVE
+    buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+               gtk.STOCK_SAVE, gtk.RESPONSE_OK)
+
+    def __init__(self, title, parent):
+        BaseChooser.__init__(self, parent, title)
+        self.dialog.set_default_response(gtk.RESPONSE_OK)
+
+    def set_current_name(self, filename):
+        self.dialog.set_current_name(filename)
+
+    def set_title(self, title):
+        self.dialog.set_title(title)
+
+    def set_current_folder(self, directory):
+        self.dialog.set_current_folder(directory)
 
 if __name__ == '__main__':
     print prompt_open()
