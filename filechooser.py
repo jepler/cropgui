@@ -42,6 +42,10 @@ def update_preview_cb(file_chooser, preview):
                 while len(image_cache) > LOW_WATER:
                     image_cache.popitem()
             image_cache[filename] = pixbuf
+        except IOError, detail:
+            print detail
+            preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
+                gtk.ICON_SIZE_LARGE_TOOLBAR)
         except:
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
                 gtk.ICON_SIZE_LARGE_TOOLBAR)
