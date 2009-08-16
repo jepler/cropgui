@@ -235,12 +235,10 @@ class App:
             try:
                 i = Image.open(image_name)
                 iw, ih = i.size
-                scale = 1
-                while iw > max_sz or ih > max_sz:
-                    iw /= 2
-                    ih /= 2
-                    scale *= 2
-                i.thumbnail((iw, ih))
+                iz = max(iw, ih)
+                scale = max(1, iz/max_sz)
+                print iz, scale, max_sz
+                i.thumbnail((iw/scale, ih/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -252,7 +250,7 @@ class App:
                 continue
             drag.image = i
             drag.rotation = image_rotation(i)
-            drag.round = max(1, 8/scale)
+            drag.round = max(1, 8./scale)
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
