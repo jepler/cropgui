@@ -23,7 +23,7 @@ import gtk
 import gobject
 
 import os
-import Image
+from PIL import Image
 import cropgui_common
 
 def apply_rotation(rotation, image):
