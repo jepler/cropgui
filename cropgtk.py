@@ -270,7 +270,7 @@ class App:
             if   drag.rotation == 3: command.extend(['-rotate', '180'])
             elif drag.rotation == 6: command.extend(['-rotate', '90'])
             elif drag.rotation == 8: command.extend(['-rotate', '270'])
-            command.extend(['-crop', cropspec, image_name])
+            command.extend(['-copy', 'all','-crop', cropspec, image_name])
             target = self.output_name(image_name)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
