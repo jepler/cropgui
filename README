@@ -31,7 +31,7 @@ python-imaging, python-imaging-tk, and libjpeg-progs. It is available under the
 terms of the GNU GPL version 2 or later. 
 
 cropgui's revision history is managed by git:
-    http://media.unpythonic.net/git/cropgui.git
+    https://github.com/jepler/cropgui
 
 -- Jeff Epler
 jepler@unpythonic.net
