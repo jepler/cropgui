@@ -85,6 +85,7 @@ class CropTask(object):
             target = open(target_name, "w")
             self.log.progress(_("Cropping to %s") % shortname)
             subprocess.call(args, stdout=target)
+            subprocess.call(["jpegexiforient", "-1", target_name])
             self.log.log(_("Cropped to %s") % shortname)
             target.close()
 
