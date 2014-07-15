@@ -293,18 +293,18 @@ class DragManagerBase(object):
 
     def rotate_ccw(self):
         r = self.rotation
-        if   r == 1: r = 6
-        elif r == 6: r = 3
-        elif r == 3: r = 8
-        elif r == 8: r = 1
+        if   r == 1: r = 8
+        elif r == 8: r = 3
+        elif r == 3: r = 6
+        elif r == 6: r = 1
         self.rotation = r
 
     def rotate_cw(self):
         r = self.rotation
-        if   r == 6: r = 1
-        elif r == 3: r = 6
-        elif r == 8: r = 3
-        elif r == 1: r = 8
+        if   r == 1: r = 6
+        elif r == 6: r = 3
+        elif r == 3: r = 8
+        elif r == 8: r = 1
         self.rotation = r
 
     inverse = {1: 1, 3:3, 6:8, 8:6}
