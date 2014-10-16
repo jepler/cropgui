@@ -207,7 +207,7 @@ try:
         b *= scale
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
-                task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
+        task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
 finally:
     task.done()
 
