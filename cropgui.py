@@ -36,11 +36,35 @@ preview.pack(side="bottom")
 do_crop = Tkinter.Button(app, text="Crop")
 do_crop.pack(side="left")
 
-stdsize_button = Tkinter.Menubutton(app, text="Size")
-stdsize_button.pack(side="left")
-stdsize = Tkinter.Menu(stdsize_button)
-stdsize_button.config(menu=stdsize)
+crop169_button = Tkinter.Menubutton(app, text="16:9")
+crop169_button.pack(side="left")
+crop169 = Tkinter.Menu(crop169_button)
+crop169_button.config(menu=crop169)
 
+crop85_button = Tkinter.Menubutton(app, text="8:5")
+crop85_button.pack(side="left")
+crop85 = Tkinter.Menu(crop85_button)
+crop85_button.config(menu=crop85)
+
+crop32_button = Tkinter.Menubutton(app, text="3:2")
+crop32_button.pack(side="left")
+crop32 = Tkinter.Menu(crop32_button)
+crop32_button.config(menu=crop32)
+
+crop43_button = Tkinter.Menubutton(app, text="4:3")
+crop43_button.pack(side="left")
+crop43 = Tkinter.Menu(crop43_button)
+crop43_button.config(menu=crop43)
+
+crop34_button = Tkinter.Menubutton(app, text="3:4")
+crop34_button.pack(side="left")
+crop34 = Tkinter.Menu(crop34_button)
+crop34_button.config(menu=crop34)
+
+crop23_button = Tkinter.Menubutton(app, text="2:3")
+crop23_button.pack(side="left")
+crop23 = Tkinter.Menu(crop23_button)
+crop23_button.config(menu=crop23)
 
 info = Tkinter.Label(app)
 info.pack(side="left")
@@ -154,7 +178,41 @@ max_w = app.winfo_screenwidth() - 64
 drag = DragManager(preview, do_crop, info)
 app.wm_protocol('WM_DELETE_WINDOW', drag.close)
 
-stdsize.add_command(label='2112x2816',command=lambda: drag.set_stdsize(2112,2816))
+crop169.add_command(label='1920 x 1080',command=lambda: drag.set_stdsize(1920,1080))
+crop169.add_command(label='4000 x 2250',command=lambda: drag.set_stdsize(4000,2250))
+
+crop85.add_command (label='1920 x 1200',command=lambda: drag.set_stdsize(1920,1200))
+crop85.add_command (label='4000 x 2500',command=lambda: drag.set_stdsize(4000,2500))
+
+crop43.add_command (label='1280 x  960',command=lambda: drag.set_stdsize(1280, 960))
+crop43.add_command (label='1600 x 1200',command=lambda: drag.set_stdsize(1600,1200))
+crop43.add_command (label='1720 x 1280',command=lambda: drag.set_stdsize(1720,1280))
+crop43.add_command (label='2048 x 1536',command=lambda: drag.set_stdsize(2048,1536))
+crop43.add_command (label='2560 x 1920',command=lambda: drag.set_stdsize(2560,1920))
+crop43.add_command (label='2816 x 2112',command=lambda: drag.set_stdsize(2816,2112))
+
+crop32.add_command (label='1134 x  756',command=lambda: drag.set_stdsize(1134, 756))
+crop32.add_command (label='1440 x  960',command=lambda: drag.set_stdsize(1440, 960))
+crop32.add_command (label='1536 x 1024',command=lambda: drag.set_stdsize(1536,1024))
+crop32.add_command (label='1756 x 1168',command=lambda: drag.set_stdsize(1756,1168))
+crop32.add_command (label='2048 x 1360',command=lambda: drag.set_stdsize(2048,1360))
+crop32.add_command (label='2592 x 1728',command=lambda: drag.set_stdsize(2592,1728))
+crop32.add_command (label='3072 x 2048',command=lambda: drag.set_stdsize(3072,2048))
+
+crop23.add_command (label=' 756 x 1134',command=lambda: drag.set_stdsize( 756,1134))
+crop23.add_command (label=' 960 x 1440',command=lambda: drag.set_stdsize( 960,1440))
+crop23.add_command (label='1024 x 1536',command=lambda: drag.set_stdsize(1024,1536))
+crop23.add_command (label='1168 x 1756',command=lambda: drag.set_stdsize(1168,1756))
+crop23.add_command (label='1360 x 2048',command=lambda: drag.set_stdsize(1360,2048))
+crop23.add_command (label='1728 x 2592',command=lambda: drag.set_stdsize(1728,2592))
+crop23.add_command (label='2048 x 3072',command=lambda: drag.set_stdsize(2048,3072))
+
+crop34.add_command (label=' 960 x 1280',command=lambda: drag.set_stdsize( 960,1280))
+crop34.add_command (label='1200 x 1600',command=lambda: drag.set_stdsize(1200,1600))
+crop34.add_command (label='1280 x 1720',command=lambda: drag.set_stdsize(1280,1720))
+crop34.add_command (label='1536 x 2048',command=lambda: drag.set_stdsize(1536,2048))
+crop34.add_command (label='1920 x 2560',command=lambda: drag.set_stdsize(1920,2560))
+crop34.add_command (label='2112 x 2816',command=lambda: drag.set_stdsize(2112,2816))
 
 
 def image_names():
