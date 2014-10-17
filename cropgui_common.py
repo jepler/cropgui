@@ -162,11 +162,11 @@ class DragManagerBase(object):
 
         # if frame doesn't fit in image, scale, preserving apect ratio
         if (x > self.w):
-            x = self.w
             y = y * self.w / x
+            x = self.w
         if (y > self.h):
-            y = self.h
             x = x * self.h / y
+            y = self.h
 
         # calculate new crop area, preserving center
         left = (self.left + self.right - x) / 2
