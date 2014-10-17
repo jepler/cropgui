@@ -156,21 +156,31 @@ class DragManagerBase(object):
         return describe_ratio(w, h)
 
     def set_stdsize(self, x, y):
+        # convert to screen coordinates
         x /= self.scale
-        x = min (x, self.w)
+        y /= self.scale
+
+        # if frame doesn't fit in image, scale, preserving apect ratio
+        if (x > self.w):
+            x = self.w
+            y = y * self.w / x
+        if (y > self.h):
+            y = self.h
+            x = x * self.h / y
+
+        # calculate new crop area, preserving center
         left = (self.left + self.right - x) / 2
         right = left + x
+        top = (self.top + self.bottom - y) / 2
+        bottom = top + y
+
+        # move crop area into the image, if necessairy
         if (left < 0):
             left = 0
             right = x
         if (right > self.w):
             right = self.w
             left = right - x
-            
-        y /= self.scale
-        y = min (y, self.h)
-        top = (self.top + self.bottom - y) / 2
-        bottom = top + y
         if (top < 0):
             top = 0
             bottom = y
