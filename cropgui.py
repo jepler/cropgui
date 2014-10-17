@@ -31,10 +31,18 @@ app.wm_title(_("CropGUI -- lossless cropping and rotation of jpeg files"))
 app.wm_iconname(_("CropGUI"))
 
 preview = Tkinter.Label(app)
-do_crop = Tkinter.Button(app, text="Crop")
-info = Tkinter.Label(app)
 preview.pack(side="bottom")
+
+do_crop = Tkinter.Button(app, text="Crop")
 do_crop.pack(side="left")
+
+stdsize_button = Tkinter.Menubutton(app, text="Size")
+stdsize_button.pack(side="left")
+stdsize = Tkinter.Menu(stdsize_button)
+stdsize_button.config(menu=stdsize)
+
+
+info = Tkinter.Label(app)
 info.pack(side="left")
 
 task = CropTask(log)
@@ -145,6 +153,9 @@ max_w = app.winfo_screenwidth() - 64
 
 drag = DragManager(preview, do_crop, info)
 app.wm_protocol('WM_DELETE_WINDOW', drag.close)
+
+stdsize.add_command(label='2112x2816',command=lambda: drag.set_stdsize(2112,2816))
+
 
 def image_names():
     if len(sys.argv) > 1:

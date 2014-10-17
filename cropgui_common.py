@@ -155,6 +155,31 @@ class DragManagerBase(object):
         h = self.bottom - self.top
         return describe_ratio(w, h)
 
+    def set_stdsize(self, x, y):
+        x /= self.scale
+        x = min (x, self.w)
+        left = (self.left + self.right - x) / 2
+        right = left + x
+        if (left < 0):
+            left = 0
+            right = x
+        if (right > self.w):
+            right = self.w
+            left = right - x
+            
+        y /= self.scale
+        y = min (y, self.h)
+        top = (self.top + self.bottom - y) / 2
+        bottom = top + y
+        if (top < 0):
+            top = 0
+            bottom = y
+        if (bottom > self.h):
+            bottom = self.h
+            top = bottom - y
+            
+        self.set_crop (top, left, right, bottom)
+
     def set_crop(self, top, left, right, bottom):
         self.top, self.bottom = self.fix(top, bottom, self.h)
         self.left, self.right = self.fix(left, right, self.w)
