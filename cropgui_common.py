@@ -93,9 +93,8 @@ class DragManagerBase(object):
     def __init__(self):
         self.render_flag = 0
         self.show_handles = True
-        self.round = 8
         self.state = DRAG_NONE
-        self.round = 1
+        self.round = 8
         self.image = None
         self.w = 0
         self.h = 0
@@ -138,7 +137,8 @@ class DragManagerBase(object):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = math.floor(a * 1. / self.round)*self.round
+        a = (a / self.round)*self.round
+        b = (b / self.round)*self.round
         return int(a), int(b)
 
     def get_corners(self):
