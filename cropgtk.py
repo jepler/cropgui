@@ -174,7 +174,7 @@ class DragManager(DragManagerBase):
                 gtk.gdk.COLORSPACE_RGB, 0, 8,
                 rendered.size[0], rendered.size[1], 3*rendered.size[0])
 
-            ll, tt, rr, bb = self.get_corners()
+            tt, ll, rr, bb = self.get_corners()
             ratio = self.describe_ratio()
 
             g['pos_left'].set_text('%d' % ll)
@@ -234,11 +234,11 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
-                iw, ih = i.size
-                iz = max(iw, ih)
+                drag.w, drag.h = i.size
+                iz = max(drag.w, drag.h)
                 scale = max(1, iz/max_sz)
                 print iz, scale, max_sz
-                i.thumbnail((iw/scale, ih/scale))
+                i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -250,7 +250,6 @@ class App:
                 continue
             drag.image = i
             drag.rotation = image_rotation(i)
-            drag.round = max(1, 8./scale)
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
