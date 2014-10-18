@@ -198,7 +198,6 @@ class DragManager(DragManagerBase):
 
 max_h = gtk.gdk.screen_height() - 64*3
 max_w = gtk.gdk.screen_width() - 64
-max_sz = min(max_w, max_h)
 
 class App:
     def __init__(self):
@@ -235,9 +234,9 @@ class App:
             try:
                 i = Image.open(image_name)
                 drag.w, drag.h = i.size
-                iz = max(drag.w, drag.h)
-                scale = max(1, iz/max_sz)
-                print iz, scale, max_sz
+                scale = 1
+                scale = max (scale, (drag.w-1)/max_w+1)
+                scale = max (scale, (drag.h-1)/max_h+1)
                 i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],

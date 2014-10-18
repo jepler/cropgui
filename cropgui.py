@@ -255,18 +255,14 @@ try:
         i = Image.open(image_name)
 
         # compute scale to fit image on display
-        iw, ih = i.size
-        scale=1
-        while iw > max_w or ih > max_h:
-            iw /= 2
-            ih /= 2
-            scale *= 2
-
-        # put original size, image, and scale into drag object
         drag.w, drag.h = i.size
-        i.thumbnail((iw, ih))
+        drag.scale=1
+        drag.scale = max (drag.scale, (drag.w-1)/max_w+1)
+        drag.scale = max (drag.scale, (drag.h-1)/max_h+1)
+
+        # put image into drag object
+        i.thumbnail((drag.w/drag.scale, drag.h/drag.scale))
         drag.image = i
-        drag.scale = scale
 
         # get user input
         set_busy(0)
