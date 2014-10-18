@@ -116,7 +116,7 @@ class DragManager(DragManagerBase):
             self.inf.configure(text="\n\n")
             return
 
-        ll, tt, rr, bb = self.get_corners()
+        tt, ll, rr, bb = self.get_corners()
         ratio = self.describe_ratio()
         self.inf.configure(text=
             "Left:  %4d  Top:    %4d    Right: %4d  Bottom: %4d\n"
@@ -250,24 +250,32 @@ def set_busy(new_busy=True):
 
 try:
     for image_name in image_names():
+        # load new image
         set_busy()
         i = Image.open(image_name)
+
+        # compute scale to fit image on display
         iw, ih = i.size
         scale=1
         while iw > max_w or ih > max_h:
             iw /= 2
             ih /= 2
             scale *= 2
+
+        # put original size, image, and scale into drag object
+        drag.w, drag.h = i.size
         i.thumbnail((iw, ih))
         drag.image = i
-        drag.round = max(1, 8/scale)
         drag.scale = scale
+
+        # get user input
         set_busy(0)
         v = drag.wait()
         set_busy()
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
-        
+
+        # call jpegtran
         base, ext = os.path.splitext(image_name)
         t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
         t *= scale

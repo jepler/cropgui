@@ -93,14 +93,12 @@ class DragManagerBase(object):
     def __init__(self):
         self.render_flag = 0
         self.show_handles = True
+        self.round = 8
         self.state = DRAG_NONE
         self.round = 1
         self.image = None
-
-    def get_w(self): return self.image.size[0]
-    w = property(get_w)
-    def get_h(self): return self.image.size[1]
-    h = property(get_h)
+        self.w = 0
+        self.h = 0
 
     def set_image(self, image):
         if image is None:
@@ -144,11 +142,11 @@ class DragManagerBase(object):
         return int(a), int(b)
 
     def get_corners(self):
-        t, l, r, b = self.top, self.left, self.right, self.bottom
-        sc = self.scale
-        ll, tt, rr, bb = l*sc, t*sc, r*sc, b*sc
+        return self.top, self.left, self.right, self.bottom
 
-        return ll, tt, rr, bb
+    def get_screencorners(self):
+        t, l, r, b = self.get_corners()
+        return t/self.scale, l/self.scale, r/self.scale, b/self.scale
 
     def describe_ratio(self):
         w = self.right - self.left
@@ -156,10 +154,6 @@ class DragManagerBase(object):
         return describe_ratio(w, h)
 
     def set_stdsize(self, x, y):
-        # convert to screen coordinates
-        x /= self.scale
-        y /= self.scale
-
         # if frame doesn't fit in image, scale, preserving apect ratio
         if (x > self.w):
             y = y * self.w / x
@@ -203,7 +197,7 @@ class DragManagerBase(object):
     def rendered(self):
         if self.image is None: return None
 
-        t, l, r, b = self.top, self.left, self.right, self.bottom
+        t, l, r, b = self.get_screencorners()
 
         assert isinstance(t, int), t
         assert isinstance(l, int), l
@@ -235,7 +229,7 @@ class DragManagerBase(object):
         return image
 
     def classify(self, x, y):
-        t, l, r, b = self.top, self.left, self.right, self.bottom
+        t, l, r, b = self.get_screencorners()
         dx = (r - l) / 4
         dy = (b - t) / 4
 
@@ -284,8 +278,8 @@ class DragManagerBase(object):
             self.fixed_ratio = False
 
     def drag_continue(self, x, y):
-        dx = x - self.x0
-        dy = y - self.y0
+        dx = (x - self.x0) * self.scale
+        dy = (y - self.y0) * self.scale
         if self.fixed_ratio:
             ratio = (self.r0-self.l0) * 1. / (self.b0 - self.t0)
             if self.state in (DRAG_TR, DRAG_BL): ratio = -ratio
@@ -293,8 +287,7 @@ class DragManagerBase(object):
                 dy = int(round(dx / ratio))
             else:
                 dx = int(round(dy * ratio))
-        new_top, new_left, new_right, new_bottom = \
-            self.top, self.left, self.right, self.bottom
+        new_top, new_left, new_right, new_bottom = self.get_corners()
         if self.state == DRAG_C:
             # A center drag bumps into the edges
             if dx > 0:
