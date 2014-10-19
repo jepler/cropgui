@@ -291,11 +291,11 @@ class DragManagerBase(object):
         if self.state == DRAG_C:
             # A center drag bumps into the edges
             if dx > 0:
-                dx = min(dx, self.w - self.r0 - 1)
+                dx = min(dx, self.w - self.r0)
             else:
                 dx = max(dx, -self.l0)
             if dy > 0:
-                dy = min(dy, self.h - self.b0 - 1)
+                dy = min(dy, self.h - self.b0)
             else:
                 dy = max(dy, -self.t0)
         if self.state in (DRAG_TL, DRAG_T, DRAG_TR, DRAG_C):
