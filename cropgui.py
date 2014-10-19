@@ -56,6 +56,11 @@ crop43_button.pack(side="left")
 crop43 = Tkinter.Menu(crop43_button)
 crop43_button.config(menu=crop43)
 
+crop11_button = Tkinter.Menubutton(app, text="1:1")
+crop11_button.pack(side="left")
+crop11 = Tkinter.Menu(crop11_button)
+crop11_button.config(menu=crop11)
+
 crop34_button = Tkinter.Menubutton(app, text="3:4")
 crop34_button.pack(side="left")
 crop34 = Tkinter.Menu(crop34_button)
@@ -182,6 +187,7 @@ crop169.add_command(label='1920 x 1080',command=lambda: drag.set_stdsize(1920,10
 crop169.add_command(label='4000 x 2248',command=lambda: drag.set_stdsize(4000,2248))
 
 crop85.add_command (label='1920 x 1200',command=lambda: drag.set_stdsize(1920,1200))
+crop85.add_command (label='3376 x 2112',command=lambda: drag.set_stdsize(3376,2112))
 crop85.add_command (label='4000 x 2496',command=lambda: drag.set_stdsize(4000,2496))
 
 crop32.add_command (label='1136 x  760',command=lambda: drag.set_stdsize(1136, 760))
@@ -191,6 +197,7 @@ crop32.add_command (label='1752 x 1168',command=lambda: drag.set_stdsize(1752,11
 crop32.add_command (label='2048 x 1360',command=lambda: drag.set_stdsize(2048,1360))
 crop32.add_command (label='2592 x 1728',command=lambda: drag.set_stdsize(2592,1728))
 crop32.add_command (label='3072 x 2048',command=lambda: drag.set_stdsize(3072,2048))
+crop32.add_command (label='4000 x 2664',command=lambda: drag.set_stdsize(4000,2664))
 
 crop43.add_command (label='1280 x  960',command=lambda: drag.set_stdsize(1280, 960))
 crop43.add_command (label='1600 x 1200',command=lambda: drag.set_stdsize(1600,1200))
@@ -198,6 +205,9 @@ crop43.add_command (label='1720 x 1280',command=lambda: drag.set_stdsize(1720,12
 crop43.add_command (label='2048 x 1536',command=lambda: drag.set_stdsize(2048,1536))
 crop43.add_command (label='2560 x 1920',command=lambda: drag.set_stdsize(2560,1920))
 crop43.add_command (label='2816 x 2112',command=lambda: drag.set_stdsize(2816,2112))
+crop43.add_command (label='3000 x 2248',command=lambda: drag.set_stdsize(3000,2248))
+
+crop11.add_command (label='3000 x 3000',command=lambda: drag.set_stdsize(3000,3000))
 
 crop34.add_command (label=' 960 x 1280',command=lambda: drag.set_stdsize( 960,1280))
 crop34.add_command (label='1200 x 1600',command=lambda: drag.set_stdsize(1200,1600))
@@ -273,11 +283,7 @@ try:
 
         # call jpegtran
         base, ext = os.path.splitext(image_name)
-        t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-        t *= scale
-        l *= scale
-        r *= scale
-        b *= scale
+        t, l, r, b = drag.get_corners()
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
         task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
