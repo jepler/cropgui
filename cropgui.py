@@ -31,10 +31,47 @@ app.wm_title(_("CropGUI -- lossless cropping and rotation of jpeg files"))
 app.wm_iconname(_("CropGUI"))
 
 preview = Tkinter.Label(app)
-do_crop = Tkinter.Button(app, text="Crop")
-info = Tkinter.Label(app)
 preview.pack(side="bottom")
+
+do_crop = Tkinter.Button(app, text="Crop")
 do_crop.pack(side="left")
+
+crop169_button = Tkinter.Menubutton(app, text="16:9")
+crop169_button.pack(side="left")
+crop169 = Tkinter.Menu(crop169_button)
+crop169_button.config(menu=crop169)
+
+crop85_button = Tkinter.Menubutton(app, text="8:5")
+crop85_button.pack(side="left")
+crop85 = Tkinter.Menu(crop85_button)
+crop85_button.config(menu=crop85)
+
+crop32_button = Tkinter.Menubutton(app, text="3:2")
+crop32_button.pack(side="left")
+crop32 = Tkinter.Menu(crop32_button)
+crop32_button.config(menu=crop32)
+
+crop43_button = Tkinter.Menubutton(app, text="4:3")
+crop43_button.pack(side="left")
+crop43 = Tkinter.Menu(crop43_button)
+crop43_button.config(menu=crop43)
+
+crop11_button = Tkinter.Menubutton(app, text="1:1")
+crop11_button.pack(side="left")
+crop11 = Tkinter.Menu(crop11_button)
+crop11_button.config(menu=crop11)
+
+crop34_button = Tkinter.Menubutton(app, text="3:4")
+crop34_button.pack(side="left")
+crop34 = Tkinter.Menu(crop34_button)
+crop34_button.config(menu=crop34)
+
+crop23_button = Tkinter.Menubutton(app, text="2:3")
+crop23_button.pack(side="left")
+crop23 = Tkinter.Menu(crop23_button)
+crop23_button.config(menu=crop23)
+
+info = Tkinter.Label(app)
 info.pack(side="left")
 
 task = CropTask(log)
@@ -84,7 +121,7 @@ class DragManager(DragManagerBase):
             self.inf.configure(text="\n\n")
             return
 
-        ll, tt, rr, bb = self.get_corners()
+        tt, ll, rr, bb = self.get_corners()
         ratio = self.describe_ratio()
         self.inf.configure(text=
             "Left:  %4d  Top:    %4d    Right: %4d  Bottom: %4d\n"
@@ -146,6 +183,48 @@ max_w = app.winfo_screenwidth() - 64
 drag = DragManager(preview, do_crop, info)
 app.wm_protocol('WM_DELETE_WINDOW', drag.close)
 
+crop169.add_command(label='1920 x 1080',command=lambda: drag.set_stdsize(1920,1080))
+crop169.add_command(label='4000 x 2248',command=lambda: drag.set_stdsize(4000,2248))
+
+crop85.add_command (label='1920 x 1200',command=lambda: drag.set_stdsize(1920,1200))
+crop85.add_command (label='3376 x 2112',command=lambda: drag.set_stdsize(3376,2112))
+crop85.add_command (label='4000 x 2496',command=lambda: drag.set_stdsize(4000,2496))
+
+crop32.add_command (label='1136 x  760',command=lambda: drag.set_stdsize(1136, 760))
+crop32.add_command (label='1440 x  960',command=lambda: drag.set_stdsize(1440, 960))
+crop32.add_command (label='1536 x 1024',command=lambda: drag.set_stdsize(1536,1024))
+crop32.add_command (label='1752 x 1168',command=lambda: drag.set_stdsize(1752,1168))
+crop32.add_command (label='2048 x 1360',command=lambda: drag.set_stdsize(2048,1360))
+crop32.add_command (label='2592 x 1728',command=lambda: drag.set_stdsize(2592,1728))
+crop32.add_command (label='3072 x 2048',command=lambda: drag.set_stdsize(3072,2048))
+crop32.add_command (label='4000 x 2664',command=lambda: drag.set_stdsize(4000,2664))
+
+crop43.add_command (label='1280 x  960',command=lambda: drag.set_stdsize(1280, 960))
+crop43.add_command (label='1600 x 1200',command=lambda: drag.set_stdsize(1600,1200))
+crop43.add_command (label='1720 x 1280',command=lambda: drag.set_stdsize(1720,1280))
+crop43.add_command (label='2048 x 1536',command=lambda: drag.set_stdsize(2048,1536))
+crop43.add_command (label='2560 x 1920',command=lambda: drag.set_stdsize(2560,1920))
+crop43.add_command (label='2816 x 2112',command=lambda: drag.set_stdsize(2816,2112))
+crop43.add_command (label='3000 x 2248',command=lambda: drag.set_stdsize(3000,2248))
+
+crop11.add_command (label='3000 x 3000',command=lambda: drag.set_stdsize(3000,3000))
+
+crop34.add_command (label=' 960 x 1280',command=lambda: drag.set_stdsize( 960,1280))
+crop34.add_command (label='1200 x 1600',command=lambda: drag.set_stdsize(1200,1600))
+crop34.add_command (label='1280 x 1720',command=lambda: drag.set_stdsize(1280,1720))
+crop34.add_command (label='1536 x 2048',command=lambda: drag.set_stdsize(1536,2048))
+crop34.add_command (label='1920 x 2560',command=lambda: drag.set_stdsize(1920,2560))
+crop34.add_command (label='2112 x 2816',command=lambda: drag.set_stdsize(2112,2816))
+
+crop23.add_command (label=' 760 x 1136',command=lambda: drag.set_stdsize( 760,1136))
+crop23.add_command (label=' 960 x 1440',command=lambda: drag.set_stdsize( 960,1440))
+crop23.add_command (label='1024 x 1536',command=lambda: drag.set_stdsize(1024,1536))
+crop23.add_command (label='1168 x 1752',command=lambda: drag.set_stdsize(1168,1752))
+crop23.add_command (label='1360 x 2048',command=lambda: drag.set_stdsize(1360,2048))
+crop23.add_command (label='1728 x 2592',command=lambda: drag.set_stdsize(1728,2592))
+crop23.add_command (label='2048 x 3072',command=lambda: drag.set_stdsize(2048,3072))
+
+
 def image_names():
     if len(sys.argv) > 1:
         for i in sys.argv[1:]: yield i
@@ -181,33 +260,33 @@ def set_busy(new_busy=True):
 
 try:
     for image_name in image_names():
+        # load new image
         set_busy()
         i = Image.open(image_name)
-        iw, ih = i.size
-        scale=1
-        while iw > max_w or ih > max_h:
-            iw /= 2
-            ih /= 2
-            scale *= 2
-        i.thumbnail((iw, ih))
+
+        # compute scale to fit image on display
+        drag.w, drag.h = i.size
+        drag.scale=1
+        drag.scale = max (drag.scale, (drag.w-1)/max_w+1)
+        drag.scale = max (drag.scale, (drag.h-1)/max_h+1)
+
+        # put image into drag object
+        i.thumbnail((drag.w/drag.scale, drag.h/drag.scale))
         drag.image = i
-        drag.round = max(1, 8/scale)
-        drag.scale = scale
+
+        # get user input
         set_busy(0)
         v = drag.wait()
         set_busy()
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
-        
+
+        # call jpegtran
         base, ext = os.path.splitext(image_name)
-        t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-        t *= scale
-        l *= scale
-        r *= scale
-        b *= scale
+        t, l, r, b = drag.get_corners()
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
-                task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
+        task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
 finally:
     task.done()
 
