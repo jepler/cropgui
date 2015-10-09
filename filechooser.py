@@ -49,7 +49,11 @@ def update_preview_cb(file_chooser, preview):
             i.thumbnail((PREVIEW_SIZE, PREVIEW_SIZE), Image.ANTIALIAS)
             i = i.convert('RGB')
             i = apply_rotation(r, i)
-            pixbuf = gtk.gdk.pixbuf_new_from_data(i.tostring(), 
+            try:
+                image_data = i.tostring()
+            except:
+                image_data = i.tobytes()
+            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data, 
                 gtk.gdk.COLORSPACE_RGB, 0, 8, i.size[0], i.size[1],
                 i.size[0]*3)
             preview.set_from_pixbuf(pixbuf)

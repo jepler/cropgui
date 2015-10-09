@@ -170,7 +170,11 @@ class DragManager(DragManagerBase):
             rendered = self.rendered()
             rendered = rendered.convert('RGB')
             i.set_size_request(*rendered.size)
-            pixbuf = gtk.gdk.pixbuf_new_from_data(rendered.tostring(),
+            try:
+                image_data = rendered.tostring()
+            except:
+                image_data = rendered.tobytes()
+            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data,
                 gtk.gdk.COLORSPACE_RGB, 0, 8,
                 rendered.size[0], rendered.size[1], 3*rendered.size[0])
 
