@@ -184,10 +184,11 @@ drag = DragManager(preview, do_crop, info)
 app.wm_protocol('WM_DELETE_WINDOW', drag.close)
 
 crop169.add_command(label='1920 x 1080',command=lambda: drag.set_stdsize(1920,1080))
+crop169.add_command(label='3840 x 2160',command=lambda: drag.set_stdsize(3840,2160))
 crop169.add_command(label='4000 x 2248',command=lambda: drag.set_stdsize(4000,2248))
 
 crop85.add_command (label='1920 x 1200',command=lambda: drag.set_stdsize(1920,1200))
-crop85.add_command (label='3376 x 2112',command=lambda: drag.set_stdsize(3376,2112))
+crop85.add_command (label='3456 x 2160',command=lambda: drag.set_stdsize(3456,2160))
 crop85.add_command (label='4000 x 2496',command=lambda: drag.set_stdsize(4000,2496))
 
 crop32.add_command (label='1136 x  760',command=lambda: drag.set_stdsize(1136, 760))
@@ -204,8 +205,9 @@ crop43.add_command (label='1600 x 1200',command=lambda: drag.set_stdsize(1600,12
 crop43.add_command (label='1720 x 1280',command=lambda: drag.set_stdsize(1720,1280))
 crop43.add_command (label='2048 x 1536',command=lambda: drag.set_stdsize(2048,1536))
 crop43.add_command (label='2560 x 1920',command=lambda: drag.set_stdsize(2560,1920))
-crop43.add_command (label='2816 x 2112',command=lambda: drag.set_stdsize(2816,2112))
-crop43.add_command (label='3000 x 2248',command=lambda: drag.set_stdsize(3000,2248))
+crop43.add_command (label='2880 x 2160',command=lambda: drag.set_stdsize(2880,2160))
+crop43.add_command (label='4000 x 3000',command=lambda: drag.set_stdsize(4000,3000))
+crop43.add_command (label='4320 x 3240',command=lambda: drag.set_stdsize(4320,3240))
 
 crop11.add_command (label='3000 x 3000',command=lambda: drag.set_stdsize(3000,3000))
 
@@ -214,7 +216,9 @@ crop34.add_command (label='1200 x 1600',command=lambda: drag.set_stdsize(1200,16
 crop34.add_command (label='1280 x 1720',command=lambda: drag.set_stdsize(1280,1720))
 crop34.add_command (label='1536 x 2048',command=lambda: drag.set_stdsize(1536,2048))
 crop34.add_command (label='1920 x 2560',command=lambda: drag.set_stdsize(1920,2560))
-crop34.add_command (label='2112 x 2816',command=lambda: drag.set_stdsize(2112,2816))
+crop34.add_command (label='2160 x 2880',command=lambda: drag.set_stdsize(2160,2880))
+crop34.add_command (label='3000 x 4000',command=lambda: drag.set_stdsize(3000,4000))
+crop34.add_command (label='3240 x 4320',command=lambda: drag.set_stdsize(3240,4320))
 
 crop23.add_command (label=' 760 x 1136',command=lambda: drag.set_stdsize( 760,1136))
 crop23.add_command (label=' 960 x 1440',command=lambda: drag.set_stdsize( 960,1440))
@@ -223,6 +227,7 @@ crop23.add_command (label='1168 x 1752',command=lambda: drag.set_stdsize(1168,17
 crop23.add_command (label='1360 x 2048',command=lambda: drag.set_stdsize(1360,2048))
 crop23.add_command (label='1728 x 2592',command=lambda: drag.set_stdsize(1728,2592))
 crop23.add_command (label='2048 x 3072',command=lambda: drag.set_stdsize(2048,3072))
+crop32.add_command (label='2664 x 4000',command=lambda: drag.set_stdsize(2664,2000))
 
 
 def image_names():
