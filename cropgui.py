@@ -227,7 +227,7 @@ crop23.add_command (label='1168 x 1752',command=lambda: drag.set_stdsize(1168,17
 crop23.add_command (label='1360 x 2048',command=lambda: drag.set_stdsize(1360,2048))
 crop23.add_command (label='1728 x 2592',command=lambda: drag.set_stdsize(1728,2592))
 crop23.add_command (label='2048 x 3072',command=lambda: drag.set_stdsize(2048,3072))
-crop32.add_command (label='2664 x 4000',command=lambda: drag.set_stdsize(2664,2000))
+crop23.add_command (label='2664 x 4000',command=lambda: drag.set_stdsize(2664,4000))
 
 
 def image_names():
