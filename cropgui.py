@@ -198,6 +198,7 @@ crop32.add_command (label='1752 x 1168',command=lambda: drag.set_stdsize(1752,11
 crop32.add_command (label='2048 x 1360',command=lambda: drag.set_stdsize(2048,1360))
 crop32.add_command (label='2592 x 1728',command=lambda: drag.set_stdsize(2592,1728))
 crop32.add_command (label='3072 x 2048',command=lambda: drag.set_stdsize(3072,2048))
+crop32.add_command (label='3240 x 2160',command=lambda: drag.set_stdsize(3240,2160))
 crop32.add_command (label='4000 x 2664',command=lambda: drag.set_stdsize(4000,2664))
 
 crop43.add_command (label='1280 x  960',command=lambda: drag.set_stdsize(1280, 960))
