@@ -259,21 +259,22 @@ class App:
                 continue # user hit "next" / escape
             
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-            t *= scale
-            l *= scale
-            r *= scale
-            b *= scale
+#            t *= scale
+#            l *= scale
+#            r *= scale
+#            b *= scale
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             command = ['nice', 'jpegtran']
             if   drag.rotation == 3: command.extend(['-rotate', '180'])
             elif drag.rotation == 6: command.extend(['-rotate', '90'])
             elif drag.rotation == 8: command.extend(['-rotate', '270'])
-            command.extend(['-copy', 'all','-crop', cropspec, image_name])
+            command.extend(['-copy', 'all','-crop', cropspec, os.path.abspath(image_name) ])
             target = self.output_name(image_name)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
-            print " ".join(command), ">", target
+#            print " ".join(command), ">", target
+            print " ".join(command).replace( os.path.abspath(image_name),  "\"%s\"" % os.path.abspath(image_name)), ">","\"%s\"" %  target
             task.add(command, target)
 
     def image_names(self):
