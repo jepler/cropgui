@@ -259,10 +259,10 @@ class App:
                 continue # user hit "next" / escape
             
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-            t *= scale
-            l *= scale
-            r *= scale
-            b *= scale
+#            t *= scale
+#            l *= scale
+#            r *= scale
+#            b *= scale
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             command = ['nice', 'jpegtran']
             if   drag.rotation == 3: command.extend(['-rotate', '180'])
