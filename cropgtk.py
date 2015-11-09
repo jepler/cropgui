@@ -268,13 +268,12 @@ class App:
             if   drag.rotation == 3: command.extend(['-rotate', '180'])
             elif drag.rotation == 6: command.extend(['-rotate', '90'])
             elif drag.rotation == 8: command.extend(['-rotate', '270'])
-            command.extend(['-copy', 'all','-crop', cropspec, os.path.abspath(image_name) ])
+            command.extend(['-copy', 'all','-crop', cropspec, image_name])
             target = self.output_name(image_name)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
-#            print " ".join(command), ">", target
-            print " ".join(command).replace( os.path.abspath(image_name),  "\"%s\"" % os.path.abspath(image_name)), ">","\"%s\"" %  target
+            print " ".join(command), ">", target
             task.add(command, target)
 
     def image_names(self):
