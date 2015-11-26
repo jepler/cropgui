@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #    cropgui, a graphical front-end for lossless jpeg cropping
 #    Copyright (C) 2009 Jeff Epler <jepler@unpythonic.net>
 #    This program is free software; you can redistribute it and/or modify
