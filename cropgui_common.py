@@ -80,14 +80,12 @@ class CropTask(object):
             task = self.tasks.get()
             if task is None:
                 break
-            args, target_name = task
-            shortname = os.path.basename(target_name)
-            target = open(target_name, "w")
+            command, target = task
+            shortname = os.path.basename(target)
             self.log.progress(_("Cropping to %s") % shortname)
-            subprocess.call(args, stdout=target)
-            subprocess.call(["jpegexiforient", "-1", target_name])
+            subprocess.call(command)
+            subprocess.call(["jpegexiforient", "-1", target])
             self.log.log(_("Cropped to %s") % shortname)
-            target.close()
 
 class DragManagerBase(object):
     def __init__(self):

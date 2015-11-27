@@ -26,6 +26,7 @@ import filechooser
 
 import sys
 import traceback
+import imghdr
 
 # otherwise, on hardy the user is shown spurious "[application] closed
 # unexpectedly" messages but denied the ability to actually "report [the]
@@ -252,9 +253,12 @@ class App:
                 m.run()
                 m.destroy()
                 continue
+            image_type = imghdr.what(image_name)
+            if image_type == "jpeg": rnd = 8.0
+            else: rnd = 1.0
             drag.image = i
             drag.rotation = image_rotation(i)
-            drag.round = max(1, 8./scale)
+            drag.round = max(1, rnd/scale)
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
@@ -270,16 +274,29 @@ class App:
             r *= scale
             b *= scale
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
-            command = ['nice', 'jpegtran']
-            if   drag.rotation == 3: command.extend(['-rotate', '180'])
-            elif drag.rotation == 6: command.extend(['-rotate', '90'])
-            elif drag.rotation == 8: command.extend(['-rotate', '270'])
-            command.extend(['-copy', 'all','-crop', cropspec, image_name])
-            target = self.output_name(image_name)
+
+            if   drag.rotation == 3: rotation = '180'
+            elif drag.rotation == 6: rotation = '90'
+            elif drag.rotation == 8: rotation = '270'
+            else: rotation = "none"
+
+            target = self.output_name(image_name,image_type)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
-            print " ".join(command), ">", target
+
+            # JPEG crop uses jpegtran
+            if image_type is "jpeg":
+                command = ['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec]
+                if not rotation == "none": command.extend(['-rotate', rotation])
+                command.extend(['-outfile', target])
+                command.extend([image_name])
+            # All other images use imagemagic convert.
+            else: 
+                command = ['nice', 'convert', image_name, '-crop', cropspec]
+                if not rotation == "none": command.extend(['-rotate', rotation])
+                command.extend([target])
+            print " ".join(command), '>', target
             task.add(command, target)
 
     def image_names(self):
@@ -292,11 +309,13 @@ class App:
                 if not files: break
                 for i in files: yield i
 
-    def output_name(self, image_name):
+    def output_name(self, image_name, image_type):
         image_name = os.path.abspath(image_name)
         d = os.path.dirname(image_name)
         i = os.path.basename(image_name)
-        j = os.path.splitext(i)[0].lower() + "-crop.jpg"
+        j = os.path.splitext(i)[0].lower() 
+        if j.endswith('-crop'): j += os.path.splitext(i)[1]
+        else: j += "-crop" + os.path.splitext(i)[1]
         if os.access(d, os.W_OK): return os.path.join(d, j)
         title = _('Save cropped version of %s') % i
         if self.dirchooser is None:
@@ -309,8 +328,11 @@ class App:
         if not r: return ''
         r = r[0]
         e = os.path.splitext(r)[1]
-        if e.lower() in ['.jpg', '.jpeg']: return r
-        return e + ".jpg"
+        if image_type == "jpeg": 
+            if e.lower() in ['.jpg', '.jpeg']: return r
+            return e + ".jpg"
+        elif e.lower() == image_type: return r
+        else: return e + "." + image_type
 
 app = App()
 try:
