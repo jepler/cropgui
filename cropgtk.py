@@ -287,15 +287,14 @@ class App:
 
             # JPEG crop uses jpegtran
             if image_type is "jpeg":
-                command = ['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec]
+                command = ['nice', 'jpegtran']
                 if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend(['-outfile', target])
-                command.extend([image_name])
+                command.extend('-copy', 'all', '-crop', cropspec,'-outfile', target, image_name)
             # All other images use imagemagic convert.
             else: 
-                command = ['nice', 'convert', image_name, '-crop', cropspec]
+                command = ['nice', 'convert']
                 if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend([target])
+                command.extend([image_name, '-crop', cropspecj target])
             print " ".join(command), '>', target
             task.add(command, target)
 
