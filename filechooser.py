@@ -104,7 +104,7 @@ class Chooser(BaseChooser):
 
         filter = gtk.FileFilter()
         filter.set_name("Images")
-        filter.add_mime_type("image")
+        filter.add_mime_type("image/*")
         filter.add_pattern("*.jpg")
         filter.add_pattern("*.jpeg")
         filter.add_pattern("*.JPG")
