@@ -1,5 +1,5 @@
 #!/bin/sh
-PYTHON=python
+PYTHON=python2
 BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python SHAREDIR=$HOME/share
 
 default_flavor () {
@@ -73,7 +73,7 @@ if [ $? -ne 0 ]; then exit $?; fi
 
 chmod +x $TARGET$BINDIR/cropgui
 
-if [ -z "$TARGET" ] && ! (cd /tmp; python -c 'import cropgui_common') > /dev/null 2>&1; then
+if [ -z "$TARGET" ] && ! (cd /tmp; $PYTHON -c 'import cropgui_common') > /dev/null 2>&1; then
     echo "*** Failed to import cropgui_common.py"
     echo "    You must add $LIBDIR to PYTHONPATH"
     exit 1
