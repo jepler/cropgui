@@ -94,13 +94,10 @@ class DragManagerBase(object):
         self.render_flag = 0
         self.show_handles = True
         self.state = DRAG_NONE
-        self.round = 1
+        self.round = 8
         self.image = None
-
-    def get_w(self): return self.image.size[0]
-    w = property(get_w)
-    def get_h(self): return self.image.size[1]
-    h = property(get_h)
+        self.w = 0
+        self.h = 0
 
     def set_image(self, image):
         if image is None:
@@ -140,20 +137,52 @@ class DragManagerBase(object):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = math.floor(a * 1. / self.round)*self.round
+        a = (a / self.round)*self.round
+        b = (b / self.round)*self.round
         return int(a), int(b)
 
     def get_corners(self):
-        t, l, r, b = self.top, self.left, self.right, self.bottom
-        sc = self.scale
-        ll, tt, rr, bb = l*sc, t*sc, r*sc, b*sc
+        return self.top, self.left, self.right, self.bottom
 
-        return ll, tt, rr, bb
+    def get_screencorners(self):
+        t, l, r, b = self.get_corners()
+        return t/self.scale, l/self.scale, r/self.scale, b/self.scale
 
     def describe_ratio(self):
         w = self.right - self.left
         h = self.bottom - self.top
         return describe_ratio(w, h)
+
+    def set_stdsize(self, x, y):
+        # if frame doesn't fit in image, scale, preserving apect ratio
+        if (x > self.w):
+            y = y * self.w / x
+            x = self.w
+        if (y > self.h):
+            x = x * self.h / y
+            y = self.h
+
+        # calculate new crop area, preserving center
+        left = (self.left + self.right - x) / 2
+        right = left + x
+        top = (self.top + self.bottom - y) / 2
+        bottom = top + y
+
+        # move crop area into the image, if necessairy
+        if (left < 0):
+            left = 0
+            right = x
+        if (right > self.w):
+            right = self.w
+            left = right - x
+        if (top < 0):
+            top = 0
+            bottom = y
+        if (bottom > self.h):
+            bottom = self.h
+            top = bottom - y
+            
+        self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):
         self.top, self.bottom = self.fix(top, bottom, self.h)
@@ -168,7 +197,7 @@ class DragManagerBase(object):
     def rendered(self):
         if self.image is None: return None
 
-        t, l, r, b = self.top, self.left, self.right, self.bottom
+        t, l, r, b = self.get_screencorners()
 
         assert isinstance(t, int), t
         assert isinstance(l, int), l
@@ -200,7 +229,7 @@ class DragManagerBase(object):
         return image
 
     def classify(self, x, y):
-        t, l, r, b = self.top, self.left, self.right, self.bottom
+        t, l, r, b = self.get_screencorners()
         dx = (r - l) / 4
         dy = (b - t) / 4
 
@@ -249,8 +278,8 @@ class DragManagerBase(object):
             self.fixed_ratio = False
 
     def drag_continue(self, x, y):
-        dx = x - self.x0
-        dy = y - self.y0
+        dx = (x - self.x0) * self.scale
+        dy = (y - self.y0) * self.scale
         if self.fixed_ratio:
             ratio = (self.r0-self.l0) * 1. / (self.b0 - self.t0)
             if self.state in (DRAG_TR, DRAG_BL): ratio = -ratio
@@ -258,16 +287,15 @@ class DragManagerBase(object):
                 dy = int(round(dx / ratio))
             else:
                 dx = int(round(dy * ratio))
-        new_top, new_left, new_right, new_bottom = \
-            self.top, self.left, self.right, self.bottom
+        new_top, new_left, new_right, new_bottom = self.get_corners()
         if self.state == DRAG_C:
             # A center drag bumps into the edges
             if dx > 0:
-                dx = min(dx, self.w - self.r0 - 1)
+                dx = min(dx, self.w - self.r0)
             else:
                 dx = max(dx, -self.l0)
             if dy > 0:
-                dy = min(dy, self.h - self.b0 - 1)
+                dy = min(dy, self.h - self.b0)
             else:
                 dy = max(dy, -self.t0)
         if self.state in (DRAG_TL, DRAG_T, DRAG_TR, DRAG_C):

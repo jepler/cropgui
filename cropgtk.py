@@ -178,7 +178,7 @@ class DragManager(DragManagerBase):
                 gtk.gdk.COLORSPACE_RGB, 0, 8,
                 rendered.size[0], rendered.size[1], 3*rendered.size[0])
 
-            ll, tt, rr, bb = self.get_corners()
+            tt, ll, rr, bb = self.get_corners()
             ratio = self.describe_ratio()
 
             g['pos_left'].set_text('%d' % ll)
@@ -202,7 +202,6 @@ class DragManager(DragManagerBase):
 
 max_h = gtk.gdk.screen_height() - 64*3
 max_w = gtk.gdk.screen_width() - 64
-max_sz = min(max_w, max_h)
 
 class App:
     def __init__(self):
@@ -238,11 +237,11 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
-                iw, ih = i.size
-                iz = max(iw, ih)
-                scale = max(1, iz/max_sz)
-                print iz, scale, max_sz
-                i.thumbnail((iw/scale, ih/scale))
+                drag.w, drag.h = i.size
+                scale = 1
+                scale = max (scale, (drag.w-1)/max_w+1)
+                scale = max (scale, (drag.h-1)/max_h+1)
+                i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -254,7 +253,6 @@ class App:
                 continue
             drag.image = i
             drag.rotation = image_rotation(i)
-            drag.round = max(1, 8./scale)
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
@@ -265,10 +263,6 @@ class App:
                 continue # user hit "next" / escape
             
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-            t *= scale
-            l *= scale
-            r *= scale
-            b *= scale
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             command = ['nice', 'jpegtran']
             if   drag.rotation == 3: command.extend(['-rotate', '180'])
