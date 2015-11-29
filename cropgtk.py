@@ -264,16 +264,29 @@ class App:
             
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
-            command = ['nice', 'jpegtran']
-            if   drag.rotation == 3: command.extend(['-rotate', '180'])
-            elif drag.rotation == 6: command.extend(['-rotate', '90'])
-            elif drag.rotation == 8: command.extend(['-rotate', '270'])
-            command.extend(['-copy', 'all','-crop', cropspec, image_name])
-            target = self.output_name(image_name)
+
+            if   drag.rotation == 3: rotation = '180'
+            elif drag.rotation == 6: rotation = '90'
+            elif drag.rotation == 8: rotation = '270'
+            else: rotation = "none"
+
+            target = self.output_name(image_name,image_type)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
-            print " ".join(command), ">", target
+
+            image_type = imghdr.what(image_name)
+            # JPEG crop uses jpegtran
+            if image_type is "jpeg":
+                command = ['nice', 'jpegtran']
+                if not rotation == "none": command.extend(['-rotate', rotation])
+                command.extend('-copy', 'all', '-crop', cropspec,'-outfile', target, image_name)
+            # All other images use imagemagic convert.
+            else: 
+                command = ['nice', 'convert']
+                if not rotation == "none": command.extend(['-rotate', rotation])
+                command.extend([image_name, '-crop', cropspec, target])
+            print " ".join(command)
             task.add(command, target)
 
     def image_names(self):
@@ -286,7 +299,7 @@ class App:
                 if not files: break
                 for i in files: yield i
 
-    def output_name(self, image_name):
+    def output_name(self, image_name, image_type):
         image_name = os.path.abspath(image_name)
         d = os.path.dirname(image_name)
         i = os.path.basename(image_name)
@@ -303,8 +316,11 @@ class App:
         if not r: return ''
         r = r[0]
         e = os.path.splitext(r)[1]
-        if e.lower() in ['.jpg', '.jpeg']: return r
-        return e + ".jpg"
+        if image_type == "jpeg": 
+            if e.lower() in ['.jpg', '.jpeg']: return r
+            return e + ".jpg"
+        elif e.lower() == image_type: return r
+        else: return e + "." + image_type
 
 app = App()
 try:
