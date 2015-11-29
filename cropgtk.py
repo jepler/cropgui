@@ -26,6 +26,7 @@ import filechooser
 
 import sys
 import traceback
+import imghdr
 
 # otherwise, on hardy the user is shown spurious "[application] closed
 # unexpectedly" messages but denied the ability to actually "report [the]
@@ -251,6 +252,7 @@ class App:
                 m.run()
                 m.destroy()
                 continue
+            image_type = imghdr.what(image_name)
             drag.image = i
             drag.rotation = image_rotation(i)
             drag.scale = scale
@@ -275,7 +277,6 @@ class App:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
 
-            image_type = imghdr.what(image_name)
             # JPEG crop uses jpegtran
             if image_type is "jpeg":
                 command = ['nice', 'jpegtran']
