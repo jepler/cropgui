@@ -292,7 +292,7 @@ try:
         t, l, r, b = drag.get_corners()
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
-        task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, image_name], target)
+        task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name], target)
 finally:
     task.done()
 
