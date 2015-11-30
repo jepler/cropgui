@@ -318,6 +318,7 @@ class DragManagerBase(object):
         self.state = DRAG_NONE
 
     def rotate_ccw(self):
+        self.w, self.h = self.h, self.w
         r = self.rotation
         if   r == 1: r = 8
         elif r == 8: r = 3
@@ -326,6 +327,7 @@ class DragManagerBase(object):
         self.rotation = r
 
     def rotate_cw(self):
+        self.w, self.h = self.h, self.w
         r = self.rotation
         if   r == 1: r = 6
         elif r == 6: r = 3
