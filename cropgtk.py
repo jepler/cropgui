@@ -281,7 +281,7 @@ class App:
             if image_type is "jpeg":
                 command = ['nice', 'jpegtran']
                 if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend('-copy', 'all', '-crop', cropspec,'-outfile', target, image_name)
+                command.extend(['-copy', 'all', '-crop', cropspec,'-outfile', target, image_name])
             # All other images use imagemagic convert.
             else: 
                 command = ['nice', 'convert']
