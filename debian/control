@@ -7,7 +7,7 @@ XS-Python-Version: current
 Standards-Version: 2.0.0-rc
 
 Package: cropgui
-Depends: python-imaging, python-gtk2
+Depends: python-imaging, python-gtk2, libjpeg-turbo-progs | libjpeg-progs
 Section: graphics
 Architecture: all
 Description: interactive tool to losslessly resize jpeg images
