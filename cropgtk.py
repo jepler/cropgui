@@ -254,7 +254,11 @@ class App:
                 continue
             image_type = imghdr.what(image_name)
             drag.image = i
-            drag.rotation = image_rotation(i)
+            drag.rotation = 1
+            rotation = image_rotation(i)
+            if rotation in (3,6,8):
+                while drag.rotation != rotation:
+                    drag.rotate_ccw()
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
