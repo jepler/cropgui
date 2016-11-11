@@ -190,6 +190,8 @@ crop169.add_command(label='4000 x 2248',command=lambda: drag.set_stdsize(4000,22
 crop85.add_command (label='1920 x 1200',command=lambda: drag.set_stdsize(1920,1200))
 crop85.add_command (label='3456 x 2160',command=lambda: drag.set_stdsize(3456,2160))
 crop85.add_command (label='4000 x 2496',command=lambda: drag.set_stdsize(4000,2496))
+crop85.add_command (label='4000 x 2496',command=lambda: drag.set_stdsize(4000,2496))
+crop85.add_command (label='5184 x 3240',command=lambda: drag.set_stdsize(5184,3240))
 
 crop32.add_command (label='1136 x  760',command=lambda: drag.set_stdsize(1136, 760))
 crop32.add_command (label='1440 x  960',command=lambda: drag.set_stdsize(1440, 960))
