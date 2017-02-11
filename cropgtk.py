@@ -238,6 +238,11 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
+                if i.format == "JPEG":
+                    drag.round = 8
+                else:
+                    drag.round = 1
+
                 drag.w, drag.h = i.size
                 scale = 1
                 scale = max (scale, (drag.w-1)/max_w+1)
