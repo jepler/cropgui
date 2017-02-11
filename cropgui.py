@@ -271,6 +271,10 @@ try:
         # load new image
         set_busy()
         i = Image.open(image_name)
+        if i.format == "JPEG":
+            drag.round = 8
+        else:
+            drag.round = 1
 
         # compute scale to fit image on display
         drag.w, drag.h = i.size
@@ -289,12 +293,16 @@ try:
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
 
-        # call jpegtran
+        # compute parameters for command line of cropping tool
         base, ext = os.path.splitext(image_name)
         t, l, r, b = drag.get_corners()
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
-        task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name], target)
+
+        if i.format == "JPEG":
+            task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name], target)
+        else:
+            task.add(['nice', 'convert',                  '-crop', cropspec,             image_name, target], target)
 finally:
     task.done()
 

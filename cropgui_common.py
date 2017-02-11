@@ -82,9 +82,11 @@ class CropTask(object):
                 break
             command, target = task
             shortname = os.path.basename(target)
-            self.log.progress(_("Cropping to %s") % shortname)
+            self.log.log(_("Cropping to %s") % shortname)
             subprocess.call(command)
-            subprocess.call(["jpegexiforient", "-1", target])
+            if command[1]=="jpegtran":
+                self.log.log(_("Setting exif orientation of %s") % shortname)
+                subprocess.call(["jpegexiforient", "-1", target])
             self.log.log(_("Cropped to %s") % shortname)
 
 class DragManagerBase(object):
