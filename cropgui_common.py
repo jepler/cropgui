@@ -137,7 +137,7 @@ class DragManagerBase(object):
         b = clamp(b, 0, lim)
         a = (a / self.round)*self.round
         b = (b / self.round)*self.round
-        return int(a), int(b)
+        return int(a+0.5), int(b+0.5)
 
     def get_corners(self):
         return self.top, self.left, self.right, self.bottom
