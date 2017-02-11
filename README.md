@@ -1,4 +1,4 @@
-cropgui is a GTK GUI for lossless JPEG cropping
+# A GTK GUI for lossless JPEG cropping
 
 Of the pictures I'd like to put online, I've found that in 75% of the cases
 where I want to retouch the photo, it's to crop it and nothing else. Since I
@@ -30,8 +30,7 @@ cropgui is written in Python and requires python, python-tkinter,
 python-imaging, python-imaging-tk, and libjpeg-progs. It is available under the
 terms of the GNU GPL version 2 or later. 
 
-cropgui's revision history is managed by git:
-    https://github.com/jepler/cropgui
-
--- Jeff Epler
-jepler@unpythonic.net
+The specific external programs required are:
+ * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
+ * `jpegexiforient` to clear the EXIF rotation flag from jpeg output images (debian package: libjpeg-turbo-progs or libjpeg-progs)
+ * `convert` to rotate and crop other image types (debian package: imagemagick or graphicsmagick-imagemagick-compat)
