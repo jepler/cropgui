@@ -301,9 +301,9 @@ try:
         print cropspec
 
         if i.format == "JPEG":
-            task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name], target)
+            task.add(['nice', 'jpegtran', '-copy',    'all',     '-crop', cropspec, '-outfile', target, image_name], target)
         else:
-            task.add(['nice', 'convert',  image_name,     '-crop', cropspec,             target],             target)
+            task.add(['nice', 'convert',  image_name, '+repage', '-crop', cropspec,             target],             target)
 finally:
     task.done()
 

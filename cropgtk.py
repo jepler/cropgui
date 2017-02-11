@@ -290,7 +290,7 @@ class App:
             else: 
                 command = ['nice', 'convert']
                 if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend([image_name, '-crop', cropspec, target])
+                command.extend([image_name, '+repage', '-crop', cropspec, target])
             print " ".join(command)
             task.add(command, target)
 
