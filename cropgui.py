@@ -298,11 +298,12 @@ try:
         t, l, r, b = drag.get_corners()
         cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
         target = base + "-crop" + ext
+        print cropspec
 
         if i.format == "JPEG":
             task.add(['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name], target)
         else:
-            task.add(['nice', 'convert',                  '-crop', cropspec,             image_name, target], target)
+            task.add(['nice', 'convert',  image_name,     '-crop', cropspec,             target],             target)
 finally:
     task.done()
 
