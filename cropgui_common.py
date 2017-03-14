@@ -152,7 +152,7 @@ class DragManagerBase(object):
         return describe_ratio(w, h)
 
     def set_stdsize(self, x, y):
-        # if frame doesn't fit in image, scale, preserving apect ratio
+        # if frame doesn't fit in image, scale, preserving aspect ratio
         if (x > self.w):
             y = y * self.w / x
             x = self.w
@@ -166,7 +166,7 @@ class DragManagerBase(object):
         top = (self.top + self.bottom - y) / 2
         bottom = top + y
 
-        # move crop area into the image, if necessairy
+        # move crop area into the image, if necessary
         if (left < 0):
             left = 0
             right = x
