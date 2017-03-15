@@ -179,7 +179,7 @@ class DragManagerBase(object):
         if (bottom > self.h):
             bottom = self.h
             top = bottom - y
-            
+
         self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):

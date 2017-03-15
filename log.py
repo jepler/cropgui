@@ -54,7 +54,7 @@ def progress(message, *args):
         message += " " * (last_width - width)
     sys.stderr.write(message + "\r")
     sys.stderr.flush()
-    last_width = width        
+    last_width = width
 
 @locked
 def log(message, *args):
