@@ -141,6 +141,3 @@ class DirChooser(BaseChooser):
 
     def set_current_folder(self, directory):
         self.dialog.set_current_folder(directory)
-
-if __name__ == '__main__':
-    print prompt_open()
