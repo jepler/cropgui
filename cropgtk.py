@@ -308,7 +308,7 @@ class App:
         image_name = os.path.abspath(image_name)
         d = os.path.dirname(image_name)
         i = os.path.basename(image_name)
-        j = os.path.splitext(i)[0].lower()
+        j = os.path.splitext(i)[0]
         if j.endswith('-crop'): j += os.path.splitext(i)[1]
         else: j += "-crop" + os.path.splitext(i)[1]
         if os.access(d, os.W_OK): return os.path.join(d, j)
