@@ -281,8 +281,11 @@ class App:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
 
+            # Copy file if no cropping or rotation.
+            if (r+b-l-t) == (drag.w+drag.h) and rotation =="none":
+                command = ['nice', 'cp' , image_name, target]
             # JPEG crop uses jpegtran
-            if image_type is "jpeg":
+            elif image_type is "jpeg":
                 command = ['nice', 'jpegtran']
                 if not rotation == "none": command.extend(['-rotate', rotation])
                 command.extend(['-copy', 'all', '-crop', cropspec,'-outfile', target, image_name])
