@@ -23,7 +23,7 @@ import gtk
 import gtk.glade
 
 import filechooser
-
+import subprocess
 import sys
 import traceback
 import imghdr
@@ -238,6 +238,17 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
+
+                # Use IMCU size to round jpeg dragging and cropping.
+                if i.format == "JPEG":
+                    sampling = subprocess.check_output(
+                        'identify -format "%[jpeg:sampling-factor]" "'+
+                        image_name+'"', shell=True)
+                    drag.roundW = int(sampling.split(',')[0].split('x')[0]) * 8
+                    drag.roundH = int(sampling.split(',')[0].split('x')[1]) * 8
+                else:
+                    drag.roundW = drag.roundH = 1
+
                 drag.w, drag.h = i.size
                 scale = 1
                 scale = max (scale, (drag.w-1)/max_w+1)

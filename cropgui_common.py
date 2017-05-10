@@ -92,7 +92,8 @@ class DragManagerBase(object):
         self.render_flag = 0
         self.show_handles = True
         self.state = DRAG_NONE
-        self.round = 8
+        self.roundW = 8
+        self.roundH = 8
         self.image = None
         self.w = 0
         self.h = 0
@@ -131,12 +132,12 @@ class DragManagerBase(object):
         self.image_set()
         self.render()
 
-    def fix(self, a, b, lim):
+    def fix(self, a, b, lim, roundN):
         a, b = sorted((b,a))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = (a / self.round)*self.round
-        b = (b / self.round)*self.round
+        a = (a / roundN)*roundN
+        b = (b / roundN)*roundN
         return int(a), int(b)
 
     def get_corners(self):
@@ -183,8 +184,8 @@ class DragManagerBase(object):
         self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):
-        self.top, self.bottom = self.fix(top, bottom, self.h)
-        self.left, self.right = self.fix(left, right, self.w)
+        self.top, self.bottom = self.fix(top, bottom, self.h, self.roundH)
+        self.left, self.right = self.fix(left, right, self.w, self.roundW)
         self.render()
 
     def get_image(self):

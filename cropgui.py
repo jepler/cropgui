@@ -22,6 +22,8 @@ import Tkinter
 import ImageTk
 import tkFileDialog
 import sys
+import subprocess
+import subprocess
 import os
 import signal
 import log
@@ -269,6 +271,26 @@ try:
         # load new image
         set_busy()
         i = Image.open(image_name)
+
+        # Use IMCU size to round jpeg dragging and cropping.
+        if i.format == "JPEG":
+            sampling = subprocess.check_output(
+                'identify -format "%[jpeg:sampling-factor]" "'+
+                image_name+'"', shell=True)
+            drag.roundW = int(sampling.split(',')[0].split('x')[0]) * 8
+            drag.roundH = int(sampling.split(',')[0].split('x')[1]) * 8
+        else:
+            drag.roundW = drag.roundH = 1
+
+        # Use IMCU size to round jpeg dragging and cropping.
+        if i.format == "JPEG":
+            sampling = subprocess.check_output(
+                'identify -format "%[jpeg:sampling-factor]" "'+
+                image_name+'"', shell=True)
+            drag.roundW = int(sampling.split(',')[0].split('x')[0]) * 8
+            drag.roundH = int(sampling.split(',')[0].split('x')[1]) * 8
+        else:
+            drag.roundW = drag.roundH = 1
 
         # compute scale to fit image on display
         drag.w, drag.h = i.size
