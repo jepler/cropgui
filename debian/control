@@ -2,7 +2,7 @@ Source: cropgui
 Section: graphics
 Priority: extra
 Maintainer: Jeff Epler <jepler@unpythonic.net>
-Build-Depends: python, python-support, debhelper
+Build-Depends: python, debhelper, python-support | dh-python
 XS-Python-Version: current
 Standards-Version: 2.0.0-rc
 
