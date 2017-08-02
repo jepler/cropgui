@@ -287,13 +287,13 @@ try:
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
 
+        t, l, r, b = drag.get_corners()
         # Copy file if no cropping.
         if (r+b-l-t) == (drag.w+drag.h):
             command = ['nice', 'cp' , image_name, target]
         # call jpegtran
         else:
             base, ext = os.path.splitext(image_name)
-            t, l, r, b = drag.get_corners()
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             target = base + "-crop" + ext
             command=['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name]
