@@ -26,9 +26,13 @@ order to fit onscreen. After releasing the mouse button, the cropped image
 boundary may move a little bit; this represents the limitation that the
 upper-left corner must be at a multiple of 8x8 original image pixels.
 
-cropgui is written in Python and requires python, python-tkinter,
-python-imaging, python-imaging-tk, and libjpeg-progs. It is available under the
-terms of the GNU GPL version 2 or later. 
+cropgui is written in Python and requires the following packages:
+ * Debian: python, python-tkinter, python-imaging, python-imaging-tk,
+   and libjpeg-progs.
+ * Fedora: python2-pillow, libjpeg-turbo-utils, pygtk2,
+   pygtk2-libglade, and ImageMagick.
+
+It is available under the terms of the GNU GPL version 2 or later.
 
 The specific external programs required are:
  * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
