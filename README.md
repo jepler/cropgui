@@ -28,13 +28,13 @@ upper-left corner must be at a multiple of 8x8 original image pixels.
 
 cropgui is written in Python and requires the following packages:
  * Debian: python, python-tkinter, python-imaging, python-imaging-tk,
-   and libjpeg-progs.
+   libjpeg-progs, and libimage-exiftool-perl.
  * Fedora: python2-pillow, libjpeg-turbo-utils, pygtk2,
-   pygtk2-libglade, and ImageMagick.
+   pygtk2-libglade, ImageMagick, and perl-Image-ExifTool.
 
 It is available under the terms of the GNU GPL version 2 or later.
 
 The specific external programs required are:
  * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
- * `jpegexiforient` to clear the EXIF rotation flag from jpeg output images (debian package: libjpeg-turbo-progs or libjpeg-progs)
+ * `exiftool` to clear the EXIF rotation flag from jpeg output images (debian package: libimage-exiftool-perl)
  * `convert` to rotate and crop other image types (debian package: imagemagick or graphicsmagick-imagemagick-compat)

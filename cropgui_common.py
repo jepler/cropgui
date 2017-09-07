@@ -84,7 +84,7 @@ class CropTask(object):
             shortname = os.path.basename(target)
             self.log.progress(_("Cropping to %s") % shortname)
             subprocess.call(command)
-            subprocess.call(["jpegexiforient", "-1", target])
+            subprocess.call(["exiftool", "-overwrite_original", "-Orientation=1", "-n", target])
             self.log.log(_("Cropped to %s") % shortname)
 
 class DragManagerBase(object):
