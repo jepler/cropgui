@@ -97,7 +97,7 @@ class DragManagerBase(object):
         self.w = 0
         self.h = 0
 
-    def set_image(self, image):
+    def set_image(self, image,  initial_rotation = 1):
         if image is None:
             if hasattr(self, 'left'): del self.left
             if hasattr(self, 'right'): del self.right
@@ -109,6 +109,7 @@ class DragManagerBase(object):
             self._orig_image = image.copy()
             self._rotation = 1
             self.image_or_rotation_changed()
+            self._rotation = initial_rotation
 
     def apply_rotation(self, image):
         if self.rotation == 1: return image.copy()

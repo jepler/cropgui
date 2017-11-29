@@ -238,11 +238,6 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
-                drag.w, drag.h = i.size
-                scale = 1
-                scale = max (scale, (drag.w-1)/max_w+1)
-                scale = max (scale, (drag.h-1)/max_h+1)
-                i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -253,12 +248,16 @@ class App:
                 m.destroy()
                 continue
             image_type = imghdr.what(image_name)
-            drag.image = i
-            drag.rotation = 1
             rotation = image_rotation(i)
-            if rotation in (3,6,8):
-                while drag.rotation != rotation:
-                    drag.rotate_ccw()
+            if rotation == 3: i = i.transpose(Image.ROTATE_180)
+            if rotation == 6: i = i.transpose(Image.ROTATE_270)
+            if rotation == 8: i = i.transpose(Image.ROTATE_90)
+            drag.w, drag.h = i.size
+            scale = 1
+            scale = max (scale, (drag.w-1)/max_w+1)
+            scale = max (scale, (drag.h-1)/max_h+1)
+            i.thumbnail((drag.w/scale, drag.h/scale))
+            drag.set_image(i, initial_rotation = rotation)
             drag.scale = scale
             self.set_busy(0)
             v = self.drag.wait()
