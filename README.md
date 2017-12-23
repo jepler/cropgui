@@ -26,13 +26,13 @@ order to fit onscreen. After releasing the mouse button, the cropped image
 boundary may move a little bit; this represents the limitation that the
 upper-left corner must be at a multiple of 8x8 original image pixels.
 
+## PREREQUISITES
+
 cropgui is written in Python and requires the following packages:
  * Debian: python, python-tkinter, python-imaging, python-imaging-tk,
    libjpeg-progs, and libimage-exiftool-perl.
  * Fedora: python2-pillow, libjpeg-turbo-utils, pygtk2,
    pygtk2-libglade, ImageMagick, and perl-Image-ExifTool.
-
-It is available under the terms of the GNU GPL version 2 or later.
 
 The specific external programs required are:
  * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
@@ -41,10 +41,19 @@ The specific external programs required are:
 
 ## INSTALLATION
 
-Although there are packages in the making, for a system-wide install, do this on
-command line after cloning this repo:
+Although there are packages in the making, for a system-wide install, first make sure
+prerequisites are met for your system and the "flavor" of cropgui you want to install.
+For the GTK version, you may skip the TK dependencies. But make sure `jpegtran`, `exiftool`
+and `convert` are installed.
+
+Then do this on command line after cloning this repo:
 
     $ sudo bash ./install.sh -p /usr -P /usr/bin/python
 
 Where the _-p_ flag tells install.sh to install to /usr instead of your home dir. And
-flag _-P_ points to your python binary, which you can find via _$ type python_
+flag _-P_ points to your python binary, which you can find via _$ type python_. You may
+set the optional -f flag to switch between _tk_ and _gtk_ (the default) flavor of the app.
+
+## LICENSE
+cropgui is available under the terms of the GNU GPL version 2 or later.
+
