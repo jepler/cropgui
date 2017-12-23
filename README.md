@@ -38,3 +38,13 @@ The specific external programs required are:
  * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
  * `exiftool` to clear the EXIF rotation flag from jpeg output images (debian package: libimage-exiftool-perl)
  * `convert` to rotate and crop other image types (debian package: imagemagick or graphicsmagick-imagemagick-compat)
+
+## INSTALLATION
+
+Although there are packages in the making, for a system-wide install, do this on
+command line after cloning this repo:
+
+    $ sudo bash ./install.sh -p /usr -P /usr/bin/python
+
+Where the _-p_ flag tells install.sh to install to /usr instead of your home dir. And
+flag _-P_ points to your python binary, which you can find via _$ type python_
