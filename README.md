@@ -54,6 +54,12 @@ Where the _-p_ flag tells install.sh to install to /usr instead of your home dir
 flag _-P_ points to your python binary, which you can find via _$ type python_. You may
 set the optional -f flag to switch between _tk_ and _gtk_ (the default) flavor of the app.
 
+## Development status
+
+The author (@jepler) is not actively developing this project.
+Issues and pull requests are not likely to be acted on.
+I would be interested in passing this project to a new maintainer.
+
+
 ## LICENSE
 cropgui is available under the terms of the GNU GPL version 2 or later.
-
