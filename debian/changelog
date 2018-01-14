@@ -21,7 +21,7 @@ cropgui (0.2+git27ee40aeee) hardy; urgency=low
   * use absolute paths
   * don't apply scaling to jpegtrans dimensions
 
- -- Reuben <reuben_p@yahoo.com> Thu, 30 Jul 2015 07:04:00 +1000
+ -- Reuben <reuben_p@yahoo.com>  Thu, 30 Jul 2015 07:04:00 +1000
 
 cropgui (0.2) hardy; urgency=low
 
