@@ -16,11 +16,12 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 PREVIEW_SIZE = 300
 
-import pygtk
-pygtk.require('2.0')
+import gi
+from gi.repository import GObject as gbject
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
+#import gtk.glade
 
-import gtk
-import gobject
 
 import os
 from PIL import Image
@@ -79,20 +80,21 @@ class BaseChooser:
         self.dialog.show()
         response = self.dialog.run()
         self.dialog.hide()
-        if response == gtk.RESPONSE_OK:
+        if response == gtk.ResponseType.OK:
             return self.dialog.get_filenames()
         else:
             return []
 
 class Chooser(BaseChooser):
-    mode = gtk.FILE_CHOOSER_ACTION_OPEN
-    buttons = (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
-               gtk.STOCK_OPEN, gtk.RESPONSE_OK)
+    mode = gtk.FileChooserAction.OPEN
+
+    buttons = (gtk.STOCK_QUIT, gtk.ResponseType.CANCEL,
+               gtk.STOCK_OPEN, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
         BaseChooser.__init__(self, parent, title)
 
-        self.dialog.set_default_response(gtk.RESPONSE_OK)
+        self.dialog.set_default_response(gtk.ResponseType.OK)
         self.dialog.set_select_multiple(True)
 
         preview = gtk.Image()
@@ -125,13 +127,13 @@ class Chooser(BaseChooser):
         self.dialog.add_filter(filter)
 
 class DirChooser(BaseChooser):
-    mode = gtk.FILE_CHOOSER_ACTION_SAVE
-    buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-               gtk.STOCK_SAVE, gtk.RESPONSE_OK)
+    mode = gtk.FileChooserAction.SAVE
+    buttons = (gtk.STOCK_CANCEL, gtk.ResponseType.CANCEL,
+               gtk.STOCK_SAVE, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
         BaseChooser.__init__(self, parent, title)
-        self.dialog.set_default_response(gtk.RESPONSE_OK)
+        self.dialog.set_default_response(gtk.ResponseType.OK)
 
     def set_current_name(self, filename):
         self.dialog.set_current_name(filename)
