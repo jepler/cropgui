@@ -1,9 +1,9 @@
 <?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
-<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+<!DOCTYPE interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
-<glade-interface>
+<interface>
 
-<widget class="GtkWindow" id="window1">
+<object class="GtkWindow" id="window1">
   <property name="visible">True</property>
   <property name="title" translatable="yes">%s - CropGUI</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
@@ -20,21 +20,21 @@
   <property name="urgency_hint">False</property>
 
   <child>
-    <widget class="GtkVBox" id="vbox1">
+    <object class="GtkVBox" id="vbox1">
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
       <property name="spacing">0</property>
 
       <child>
-	<widget class="GtkToolbar" id="toolbar1">
+	<object class="GtkToolbar" id="toolbar1">
 	  <property name="visible">True</property>
 	  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 	  <property name="toolbar_style">GTK_TOOLBAR_BOTH</property>
-	  <property name="tooltips">True</property>
+<!--	  <property name="tooltips">True</property>-->
 	  <property name="show_arrow">True</property>
 
 	  <child>
-	    <widget class="GtkToolButton" id="toolbutton1">
+	    <object class="GtkToolButton" id="toolbutton1">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Crop</property>
 	      <property name="use_underline">True</property>
@@ -42,7 +42,7 @@
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">True</property>
@@ -50,7 +50,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolButton" id="toolbutton2">
+	    <object class="GtkToolButton" id="toolbutton2">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Skip</property>
 	      <property name="use_underline">True</property>
@@ -58,7 +58,7 @@
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">True</property>
@@ -66,12 +66,12 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkSeparatorToolItem" id="separatortoolitem1">
+	    <object class="GtkSeparatorToolItem" id="separatortoolitem1">
 	      <property name="visible">True</property>
 	      <property name="draw">True</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">False</property>
@@ -79,15 +79,15 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolButton" id="toolbutton3">
+	    <object class="GtkToolButton" id="toolbutton3">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Rotate left</property>
 	      <property name="use_underline">True</property>
-	      <property name="icon">stock-rotate-270-16.png</property>
+<!--	      <property name="icon">stock-rotate-270-16.png</property>-->
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">True</property>
@@ -95,15 +95,15 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolButton" id="toolbutton4">
+	    <object class="GtkToolButton" id="toolbutton4">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Rotate right</property>
 	      <property name="use_underline">True</property>
-	      <property name="icon">stock-rotate-90-16.png</property>
+<!--	      <property name="icon">stock-rotate-90-16.png</property>-->
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">True</property>
@@ -111,12 +111,12 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkSeparatorToolItem" id="separatortoolitem2">
+	    <object class="GtkSeparatorToolItem" id="separatortoolitem2">
 	      <property name="visible">True</property>
 	      <property name="draw">True</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">False</property>
@@ -124,14 +124,14 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolItem" id="toolitem1">
+	    <object class="GtkToolItem" id="toolitem1">
 	      <property name="visible">True</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
 
 	      <child>
-		<widget class="GtkTable" id="table1">
+		<object class="GtkTable" id="table1">
 		  <property name="visible">True</property>
 		  <property name="n_rows">2</property>
 		  <property name="n_columns">8</property>
@@ -140,7 +140,7 @@
 		  <property name="column_spacing">0</property>
 
 		  <child>
-		    <widget class="GtkLabel" id="label1">
+		    <object class="GtkLabel" id="label1">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Left:</property>
 		      <property name="use_underline">False</property>
@@ -156,7 +156,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">0</property>
 		      <property name="right_attach">1</property>
@@ -168,7 +168,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label2">
+		    <object class="GtkLabel" id="label2">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Width:</property>
 		      <property name="use_underline">False</property>
@@ -184,7 +184,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">0</property>
 		      <property name="right_attach">1</property>
@@ -196,7 +196,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_left">
+		    <object class="GtkLabel" id="pos_left">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -212,7 +212,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">1</property>
 		      <property name="right_attach">2</property>
@@ -224,7 +224,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_width">
+		    <object class="GtkLabel" id="pos_width">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -240,7 +240,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">1</property>
 		      <property name="right_attach">2</property>
@@ -252,7 +252,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label5">
+		    <object class="GtkLabel" id="label5">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Top:</property>
 		      <property name="use_underline">False</property>
@@ -268,7 +268,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">2</property>
 		      <property name="right_attach">3</property>
@@ -280,7 +280,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label6">
+		    <object class="GtkLabel" id="label6">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Height:</property>
 		      <property name="use_underline">False</property>
@@ -296,7 +296,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">2</property>
 		      <property name="right_attach">3</property>
@@ -308,7 +308,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_top">
+		    <object class="GtkLabel" id="pos_top">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -324,7 +324,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">3</property>
 		      <property name="right_attach">4</property>
@@ -336,7 +336,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_height">
+		    <object class="GtkLabel" id="pos_height">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -352,7 +352,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">3</property>
 		      <property name="right_attach">4</property>
@@ -364,7 +364,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label9">
+		    <object class="GtkLabel" id="label9">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Right:</property>
 		      <property name="use_underline">False</property>
@@ -380,7 +380,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">4</property>
 		      <property name="right_attach">5</property>
@@ -392,7 +392,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label10">
+		    <object class="GtkLabel" id="label10">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Ratio:</property>
 		      <property name="use_underline">False</property>
@@ -408,7 +408,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">4</property>
 		      <property name="right_attach">5</property>
@@ -420,7 +420,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_right">
+		    <object class="GtkLabel" id="pos_right">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -436,7 +436,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">5</property>
 		      <property name="right_attach">6</property>
@@ -448,7 +448,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label13">
+		    <object class="GtkLabel" id="label13">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Bottom:</property>
 		      <property name="use_underline">False</property>
@@ -464,7 +464,7 @@
 		      <property name="width_chars">-1</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">6</property>
 		      <property name="right_attach">7</property>
@@ -476,7 +476,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_bottom">
+		    <object class="GtkLabel" id="pos_bottom">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%d</property>
 		      <property name="use_underline">False</property>
@@ -492,7 +492,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">7</property>
 		      <property name="right_attach">8</property>
@@ -504,7 +504,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="pos_ratio">
+		    <object class="GtkLabel" id="pos_ratio">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">%s</property>
 		      <property name="use_underline">False</property>
@@ -520,7 +520,7 @@
 		      <property name="width_chars">5</property>
 		      <property name="single_line_mode">False</property>
 		      <property name="angle">0</property>
-		    </widget>
+		    </object>
 		    <packing>
 		      <property name="left_attach">5</property>
 		      <property name="right_attach">7</property>
@@ -530,15 +530,15 @@
 		      <property name="y_options"></property>
 		    </packing>
 		  </child>
-		</widget>
+		</object>
 	      </child>
-	    </widget>
+	    </object>
 	    <packing>
 	      <property name="expand">False</property>
 	      <property name="homogeneous">False</property>
 	    </packing>
 	  </child>
-	</widget>
+	</object>
 	<packing>
 	  <property name="padding">0</property>
 	  <property name="expand">False</property>
@@ -547,14 +547,14 @@
       </child>
 
       <child>
-	<widget class="GtkEventBox" id="eventbox1">
+	<object class="GtkEventBox" id="eventbox1">
 	  <property name="visible">True</property>
 	  <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK</property>
 	  <property name="visible_window">True</property>
 	  <property name="above_child">False</property>
 
 	  <child>
-	    <widget class="GtkImage" id="image1">
+	    <object class="GtkImage" id="image1">
 	      <property name="width_request">1000</property>
 	      <property name="height_request">650</property>
 	      <property name="visible">True</property>
@@ -562,9 +562,9 @@
 	      <property name="yalign">0</property>
 	      <property name="xpad">0</property>
 	      <property name="ypad">0</property>
-	    </widget>
+	    </object>
 	  </child>
-	</widget>
+	</object>
 	<packing>
 	  <property name="padding">0</property>
 	  <property name="expand">True</property>
@@ -573,18 +573,18 @@
       </child>
 
       <child>
-	<widget class="GtkStatusbar" id="statusbar1">
+	<object class="GtkStatusbar" id="statusbar1">
 	  <property name="visible">True</property>
-	  <property name="has_resize_grip">True</property>
-	</widget>
+<!--	  <property name="has_resize_grip">True</property>-->
+	</object>
 	<packing>
 	  <property name="padding">0</property>
 	  <property name="expand">False</property>
 	  <property name="fill">False</property>
 	</packing>
       </child>
-    </widget>
+    </object>
   </child>
-</widget>
+</object>
 
-</glade-interface>
+</interface>
