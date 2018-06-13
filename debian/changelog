@@ -1,9 +1,27 @@
+cropgui (0.3) UNRELEASED; urgency=medium
+
+  * Tag a new release to help packagers
+  * Use jpegexiforient instead of exiftool
+  * Crop other types of images (may not be lossless)
+  * Rotate other types of images via imagemagick convert
+  * Just copy file to output if the cropped and uncropped dimensions match
+  * Don't forcibly convert filenames to lowercase
+  * Don't create output filenames like foo-crop-crop.jpg
+  * Don't hardcode TIOCGWINSZ value, it's in module termios
+  * Fix initial rotation of images with EXIF rotation
+  * Make cropgui.desktop follow desktop file specification better
+  * Work around gratuitious 'tobytes' breakage in pillow
+  * Other bugfixes and enhancements
+  * Update debian packaging
+
+ -- Jeff Epler <jepler@unpythonic.net>  Sat, 30 Sep 2017 09:24:01 -0500
+
 cropgui (0.2+git27ee40aeee) hardy; urgency=low
 
-  * use absoloute paths
+  * use absolute paths
   * don't apply scaling to jpegtrans dimensions
 
- -- Reuben <reuben_p@yahoo.com> Thu, 30 Jul 2015 07:04:00 +1000
+ -- Reuben <reuben_p@yahoo.com>  Thu, 30 Jul 2015 07:04:00 +1000
 
 cropgui (0.2) hardy; urgency=low
 
@@ -17,7 +35,7 @@ cropgui (0.2) hardy; urgency=low
 
 cropgui (0.1.1) hardy; urgency=low
 
-  * fix dash-compatability of build script 
+  * fix dash-compatibility of build script 
 
  -- Jeff Epler <jepler@unpythonic.net>  Sun, 26 Jul 2009 12:18:37 -0500
 

@@ -84,7 +84,7 @@ class CropTask(object):
             shortname = os.path.basename(target)
             self.log.progress(_("Cropping to %s") % shortname)
             subprocess.call(command)
-            subprocess.call(["jpegexiforient", "-1", target])
+            subprocess.call(["exiftool", "-overwrite_original", "-Orientation=1", "-n", target])
             self.log.log(_("Cropped to %s") % shortname)
 
 class DragManagerBase(object):
@@ -152,7 +152,7 @@ class DragManagerBase(object):
         return describe_ratio(w, h)
 
     def set_stdsize(self, x, y):
-        # if frame doesn't fit in image, scale, preserving apect ratio
+        # if frame doesn't fit in image, scale, preserving aspect ratio
         if (x > self.w):
             y = y * self.w / x
             x = self.w
@@ -166,7 +166,7 @@ class DragManagerBase(object):
         top = (self.top + self.bottom - y) / 2
         bottom = top + y
 
-        # move crop area into the image, if necessairy
+        # move crop area into the image, if necessary
         if (left < 0):
             left = 0
             right = x
@@ -179,7 +179,7 @@ class DragManagerBase(object):
         if (bottom > self.h):
             bottom = self.h
             top = bottom - y
-            
+
         self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):

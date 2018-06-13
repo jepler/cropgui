@@ -53,7 +53,7 @@ def update_preview_cb(file_chooser, preview):
                 image_data = i.tostring()
             except:
                 image_data = i.tobytes()
-            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data, 
+            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data,
                 gtk.gdk.COLORSPACE_RGB, 0, 8, i.size[0], i.size[1],
                 i.size[0]*3)
             preview.set_from_pixbuf(pixbuf)
@@ -141,6 +141,3 @@ class DirChooser(BaseChooser):
 
     def set_current_folder(self, directory):
         self.dialog.set_current_folder(directory)
-
-if __name__ == '__main__':
-    print prompt_open()

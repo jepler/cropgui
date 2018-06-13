@@ -2,12 +2,12 @@ Source: cropgui
 Section: graphics
 Priority: extra
 Maintainer: Jeff Epler <jepler@unpythonic.net>
-Build-Depends: python, python-support, debhelper
+Build-Depends: python, debhelper, python-support | dh-python
 XS-Python-Version: current
 Standards-Version: 2.0.0-rc
 
 Package: cropgui
-Depends: python-imaging, python-gtk2, libjpeg-turbo-progs | libjpeg-progs
+Depends: python-imaging, python-gtk2, libjpeg-turbo-progs | libjpeg-progs, libimage-exiftool-perl, imagemagick
 Section: graphics
 Architecture: all
 Description: interactive tool to losslessly resize jpeg images

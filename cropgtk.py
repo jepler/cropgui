@@ -140,7 +140,7 @@ class DragManager(DragManagerBase):
 
     def image_set(self):
         self.render()
-            
+
     def render(self):
         if self.idle is None:
             self.idle = gobject.idle_add(self.do_render)
@@ -267,7 +267,7 @@ class App:
             if v == 0:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "next" / escape
-            
+
             t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
 
@@ -281,13 +281,16 @@ class App:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
 
+            # Copy file if no cropping or rotation.
+            if (r+b-l-t) == (drag.w+drag.h) and rotation =="none":
+                command = ['nice', 'cp' , image_name, target]
             # JPEG crop uses jpegtran
-            if image_type is "jpeg":
+            elif image_type is "jpeg":
                 command = ['nice', 'jpegtran']
                 if not rotation == "none": command.extend(['-rotate', rotation])
                 command.extend(['-copy', 'all', '-crop', cropspec,'-outfile', target, image_name])
             # All other images use imagemagic convert.
-            else: 
+            else:
                 command = ['nice', 'convert']
                 if not rotation == "none": command.extend(['-rotate', rotation])
                 command.extend([image_name, '-crop', cropspec, target])
@@ -308,7 +311,7 @@ class App:
         image_name = os.path.abspath(image_name)
         d = os.path.dirname(image_name)
         i = os.path.basename(image_name)
-        j = os.path.splitext(i)[0].lower() 
+        j = os.path.splitext(i)[0]
         if j.endswith('-crop'): j += os.path.splitext(i)[1]
         else: j += "-crop" + os.path.splitext(i)[1]
         if os.access(d, os.W_OK): return os.path.join(d, j)
@@ -323,7 +326,7 @@ class App:
         if not r: return ''
         r = r[0]
         e = os.path.splitext(r)[1]
-        if image_type == "jpeg": 
+        if image_type == "jpeg":
             if e.lower() in ['.jpg', '.jpeg']: return r
             return e + ".jpg"
         elif e.lower() == image_type: return r
