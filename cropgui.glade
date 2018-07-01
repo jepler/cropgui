@@ -20,8 +20,9 @@
   <property name="urgency_hint">False</property>
 
   <child>
-    <object class="GtkVBox" id="vbox1">
+    <object class="GtkBox" id="vbox1">
       <property name="visible">True</property>
+      <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
       <property name="homogeneous">False</property>
       <property name="spacing">0</property>
 
@@ -38,7 +39,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Crop</property>
 	      <property name="use_underline">True</property>
-	      <property name="stock_id">gtk-cut</property>
+              <property name="icon_name">edit-cut</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
@@ -54,7 +55,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Skip</property>
 	      <property name="use_underline">True</property>
-	      <property name="stock_id">gtk-go-forward</property>
+	      <property name="icon_name">go-next</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
@@ -83,7 +84,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Rotate left</property>
 	      <property name="use_underline">True</property>
-<!--	      <property name="icon">stock-rotate-270-16.png</property>-->
+              <property name="icon_name">object-rotate-left</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
@@ -99,7 +100,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Rotate right</property>
 	      <property name="use_underline">True</property>
-<!--	      <property name="icon">stock-rotate-90-16.png</property>-->
+              <property name="icon_name">object-rotate-right</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>
@@ -133,9 +134,9 @@
 	      <child>
 		<object class="GtkTable" id="table1">
 		  <property name="visible">True</property>
-		  <property name="n_rows">2</property>
-		  <property name="n_columns">8</property>
-		  <property name="homogeneous">False</property>
+<!--		  <property name="n_rows">2</property>
+		  <property name="n_columns">8</property>-->
+		  <property name="homogeneous">False</property>-->
 		  <property name="row_spacing">0</property>
 		  <property name="column_spacing">0</property>
 
