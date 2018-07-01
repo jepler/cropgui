@@ -17,9 +17,9 @@
 PREVIEW_SIZE = 300
 
 import gi
-from gi.repository import GObject as gbject
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
+from gi.repository import GdkPixbuf as GdkPixbuf
 #import gtk.glade
 
 
@@ -40,7 +40,7 @@ def update_preview_cb(file_chooser, preview):
     file_chooser.set_preview_widget_active(True)
     filename = file_chooser.get_preview_filename()
     if not filename or os.path.isdir(filename):
-        preview.set_from_stock(gtk.STOCK_DIRECTORY, gtk.ICON_SIZE_LARGE_TOOLBAR)
+        preview.set_from_stock(gtk.STOCK_DIRECTORY, gtk.IconSize.LARGE_TOOLBAR)
     elif filename in image_cache:
         preview.set_from_pixbuf(image_cache[filename])
     else:
@@ -54,8 +54,8 @@ def update_preview_cb(file_chooser, preview):
                 image_data = i.tostring()
             except:
                 image_data = i.tobytes()
-            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data,
-                gtk.gdk.COLORSPACE_RGB, 0, 8, i.size[0], i.size[1],
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image_data,
+                GdkPixbuf.Colorspace.RGB, 0, 8, i.size[0], i.size[1],
                 i.size[0]*3)
             preview.set_from_pixbuf(pixbuf)
             if len(image_cache) > HIGH_WATER:
@@ -65,10 +65,10 @@ def update_preview_cb(file_chooser, preview):
         except IOError, detail:
             print detail
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
-                gtk.ICON_SIZE_LARGE_TOOLBAR)
+                gtk.IconSize.LARGE_TOOLBAR)
         except:
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
-                gtk.ICON_SIZE_LARGE_TOOLBAR)
+                gtk.IconSize.LARGE_TOOLBAR)
             raise
 
 class BaseChooser:

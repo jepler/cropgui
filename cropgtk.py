@@ -19,12 +19,13 @@ from cropgui_common import *
 from cropgui_common import _
 
 import gi
-from gi.repository import GObject as gbject
+from gi.repository import GObject as gobject
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 #import gtk.glade
 from gi.repository import Gdk as gdk
 import filechooser
+from gi.repository import GdkPixbuf as GdkPixbuf
 
 import sys
 import traceback
@@ -85,14 +86,14 @@ class DragManager(DragManagerBase):
         return event.x, event.y
 
     def press(self, w, event):
-        if event.type == gdk._2BUTTON_PRESS:
+        if event.type == gdk.EventType._2BUTTON_PRESS:
             return self.done()
         x, y = self.coords(event)
-        self.drag_start(x, y, event.state & gdk.SHIFT_MASK)
+        self.drag_start(x, y, event.state & gdk.ModifierType.SHIFT_MASK)
 
     def motion(self, w, event):
         x, y = self.coords(event)
-        if event.state & gdk.BUTTON1_MASK:
+        if event.state & gdk.ModifierType.BUTTON1_MASK:
             self.drag_continue(x, y)
         else:
             self.idle_motion(x, y)
@@ -116,7 +117,7 @@ class DragManager(DragManagerBase):
         else:
             what = self.classify(x, y)
             cursor = self.cursor_map.get(what, None)
-        i.window.set_cursor(cursor)
+#        i.window.set_cursor(cursor)
 
     def release(self, w, event):
         x, y = self.coords(event)
@@ -135,8 +136,8 @@ class DragManager(DragManagerBase):
         self.loop.quit()
 
     def key(self, w, e):
-        if e.keyval == gtk.keysyms.Escape: self.escape()
-        elif e.keyval == gtk.keysyms.Return: self.done()
+        if e.keyval == gdk.KEY_Escape: self.escape()
+        elif e.keyval == gdk.KEY_Return: self.done()
         elif e.string and e.string in ',<': self.rotate_ccw()
         elif e.string and e.string in '.>': self.rotate_cw()
 
@@ -158,8 +159,8 @@ class DragManager(DragManagerBase):
             return
 
         if self.image is None:
-            pixbuf = gdk.pixbuf_new_from_data('\0\0\0',
-                gdk.COLORSPACE_RGB, 0, 8, 1, 1, 3)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data('\0\0\0',
+                GdkPixbuf.Colorspace.RGB, 0, 8, 1, 1, 3)
             i.set_from_pixbuf(pixbuf)
             g['pos_left'].set_text('---')
             g['pos_right'].set_text('---')
@@ -177,8 +178,8 @@ class DragManager(DragManagerBase):
                 image_data = rendered.tostring()
             except:
                 image_data = rendered.tobytes()
-            pixbuf = gdk.pixbuf_new_from_data(image_data,
-                gdk.COLORSPACE_RGB, 0, 8,
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image_data,
+                GdkPixbuf.Colorspace.RGB, 0, 8,
                 rendered.size[0], rendered.size[1], 3*rendered.size[0])
 
             tt, ll, rr, bb = self.get_corners()
