@@ -9,6 +9,7 @@ install:
 binary-indep: install
 	(cd debian/tmp; find -not -type d) > debian/cropgui.files
 	dh_movefiles
+	dh_python2
 	dh_installchangelogs
 	dh_installdocs
 	dh_installdeb
