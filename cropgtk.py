@@ -18,11 +18,14 @@
 from cropgui_common import *
 from cropgui_common import _
 
-import gobject
-import gtk
-import gtk.glade
-
+import gi
+from gi.repository import GObject as gobject
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
+#import gtk.glade
+from gi.repository import Gdk as gdk
 import filechooser
+from gi.repository import GdkPixbuf as GdkPixbuf
 
 import sys
 import traceback
@@ -39,8 +42,8 @@ def excepthook(exc_type, exc_obj, exc_tb):
     lines = traceback.format_exception(exc_type, exc_obj, exc_tb)
     print "".join(lines)
     m = gtk.MessageDialog(w,
-                gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
+                gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
+                gtk.MessageType.ERROR, gtk.ButtonsType.OK,
                 _("Stepconf encountered an error.  The following "
                 "information may be useful in troubleshooting:\n\n")
                 + "".join(lines))
@@ -83,29 +86,29 @@ class DragManager(DragManagerBase):
         return event.x, event.y
 
     def press(self, w, event):
-        if event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.type == gdk.EventType._2BUTTON_PRESS:
             return self.done()
         x, y = self.coords(event)
-        self.drag_start(x, y, event.state & gtk.gdk.SHIFT_MASK)
+        self.drag_start(x, y, event.state & gdk.ModifierType.SHIFT_MASK)
 
     def motion(self, w, event):
         x, y = self.coords(event)
-        if event.state & gtk.gdk.BUTTON1_MASK:
+        if event.state & gdk.ModifierType.BUTTON1_MASK:
             self.drag_continue(x, y)
         else:
             self.idle_motion(x, y)
 
-    idle_cursor = gtk.gdk.Cursor(gtk.gdk.WATCH)
+    idle_cursor = gdk.Cursor(gdk.CursorType.WATCH)
     cursor_map = {
-        DRAG_TL: gtk.gdk.Cursor(gtk.gdk.TOP_LEFT_CORNER),
-        DRAG_L: gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE),
-        DRAG_BL: gtk.gdk.Cursor(gtk.gdk.BOTTOM_LEFT_CORNER),
-        DRAG_TR: gtk.gdk.Cursor(gtk.gdk.TOP_RIGHT_CORNER),
-        DRAG_R: gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE),
-        DRAG_BR: gtk.gdk.Cursor(gtk.gdk.BOTTOM_RIGHT_CORNER),
-        DRAG_T: gtk.gdk.Cursor(gtk.gdk.TOP_SIDE),
-        DRAG_B: gtk.gdk.Cursor(gtk.gdk.BOTTOM_SIDE),
-        DRAG_C: gtk.gdk.Cursor(gtk.gdk.FLEUR)}
+        DRAG_TL: gdk.Cursor(gdk.CursorType.TOP_LEFT_CORNER),
+        DRAG_L: gdk.Cursor(gdk.CursorType.LEFT_SIDE),
+        DRAG_BL: gdk.Cursor(gdk.CursorType.BOTTOM_LEFT_CORNER),
+        DRAG_TR: gdk.Cursor(gdk.CursorType.TOP_RIGHT_CORNER),
+        DRAG_R: gdk.Cursor(gdk.CursorType.RIGHT_SIDE),
+        DRAG_BR: gdk.Cursor(gdk.CursorType.BOTTOM_RIGHT_CORNER),
+        DRAG_T: gdk.Cursor(gdk.CursorType.TOP_SIDE),
+        DRAG_B: gdk.Cursor(gdk.CursorType.BOTTOM_SIDE),
+        DRAG_C: gdk.Cursor(gdk.CursorType.FLEUR)}
 
     def idle_motion(self, x, y):
         i = self.g['image1']
@@ -114,7 +117,7 @@ class DragManager(DragManagerBase):
         else:
             what = self.classify(x, y)
             cursor = self.cursor_map.get(what, None)
-        i.window.set_cursor(cursor)
+#        i.window.set_cursor(cursor)
 
     def release(self, w, event):
         x, y = self.coords(event)
@@ -133,8 +136,8 @@ class DragManager(DragManagerBase):
         self.loop.quit()
 
     def key(self, w, e):
-        if e.keyval == gtk.keysyms.Escape: self.escape()
-        elif e.keyval == gtk.keysyms.Return: self.done()
+        if e.keyval == gdk.KEY_Escape: self.escape()
+        elif e.keyval == gdk.KEY_Return: self.done()
         elif e.string and e.string in ',<': self.rotate_ccw()
         elif e.string and e.string in '.>': self.rotate_cw()
 
@@ -156,8 +159,8 @@ class DragManager(DragManagerBase):
             return
 
         if self.image is None:
-            pixbuf = gtk.gdk.pixbuf_new_from_data('\0\0\0',
-                gtk.gdk.COLORSPACE_RGB, 0, 8, 1, 1, 3)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data('\0\0\0',
+                GdkPixbuf.Colorspace.RGB, 0, 8, 1, 1, 3)
             i.set_from_pixbuf(pixbuf)
             g['pos_left'].set_text('---')
             g['pos_right'].set_text('---')
@@ -175,8 +178,8 @@ class DragManager(DragManagerBase):
                 image_data = rendered.tostring()
             except:
                 image_data = rendered.tobytes()
-            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data,
-                gtk.gdk.COLORSPACE_RGB, 0, 8,
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image_data,
+                GdkPixbuf.Colorspace.RGB, 0, 8,
                 rendered.size[0], rendered.size[1], 3*rendered.size[0])
 
             tt, ll, rr, bb = self.get_corners()
@@ -201,19 +204,21 @@ class DragManager(DragManagerBase):
         self.loop.run()
         return self.result
 
-max_h = gtk.gdk.screen_height() - 64*3
-max_w = gtk.gdk.screen_width() - 64
+max_h = gdk.Screen.height() - 64*3
+max_w = gdk.Screen.width() - 64
 
 class App:
     def __init__(self):
-        self.glade = gtk.glade.XML(gladefile)
+	self.builder = gtk.Builder()
+	self.builder.add_from_file(gladefile)
+        #self.glade = gtk.glade.XML(gladefile)
         self.drag = DragManager(self)
         self.task = CropTask(self)
         self.dirchooser = None
         self['window1'].set_title(_("CropGTK"))
 
     def __getitem__(self, name):
-        return self.glade.get_widget(name)
+        return self.builder.get_object(name)
 
     def log(self, msg):
         s = self['statusbar1']
@@ -245,8 +250,8 @@ class App:
                 i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,), detail:
                 m = gtk.MessageDialog(self['window1'],
-                    gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                    gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
+                    gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
+                    gtk.MessageType.ERROR, gtk.ButtonsType.OK,
                     "Could not open %s: %s" % (image_name, detail))
                 m.show()
                 m.run()

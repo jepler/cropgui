@@ -16,11 +16,12 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 PREVIEW_SIZE = 300
 
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
+from gi.repository import GdkPixbuf as GdkPixbuf
+#import gtk.glade
 
-import gtk
-import gobject
 
 import os
 from PIL import Image
@@ -39,7 +40,7 @@ def update_preview_cb(file_chooser, preview):
     file_chooser.set_preview_widget_active(True)
     filename = file_chooser.get_preview_filename()
     if not filename or os.path.isdir(filename):
-        preview.set_from_stock(gtk.STOCK_DIRECTORY, gtk.ICON_SIZE_LARGE_TOOLBAR)
+        preview.set_from_stock(gtk.STOCK_DIRECTORY, gtk.IconSize.LARGE_TOOLBAR)
     elif filename in image_cache:
         preview.set_from_pixbuf(image_cache[filename])
     else:
@@ -53,8 +54,8 @@ def update_preview_cb(file_chooser, preview):
                 image_data = i.tostring()
             except:
                 image_data = i.tobytes()
-            pixbuf = gtk.gdk.pixbuf_new_from_data(image_data,
-                gtk.gdk.COLORSPACE_RGB, 0, 8, i.size[0], i.size[1],
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(image_data,
+                GdkPixbuf.Colorspace.RGB, 0, 8, i.size[0], i.size[1],
                 i.size[0]*3)
             preview.set_from_pixbuf(pixbuf)
             if len(image_cache) > HIGH_WATER:
@@ -64,10 +65,10 @@ def update_preview_cb(file_chooser, preview):
         except IOError, detail:
             print detail
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
-                gtk.ICON_SIZE_LARGE_TOOLBAR)
+                gtk.IconSize.LARGE_TOOLBAR)
         except:
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
-                gtk.ICON_SIZE_LARGE_TOOLBAR)
+                gtk.IconSize.LARGE_TOOLBAR)
             raise
 
 class BaseChooser:
@@ -79,20 +80,21 @@ class BaseChooser:
         self.dialog.show()
         response = self.dialog.run()
         self.dialog.hide()
-        if response == gtk.RESPONSE_OK:
+        if response == gtk.ResponseType.OK:
             return self.dialog.get_filenames()
         else:
             return []
 
 class Chooser(BaseChooser):
-    mode = gtk.FILE_CHOOSER_ACTION_OPEN
-    buttons = (gtk.STOCK_QUIT, gtk.RESPONSE_CANCEL,
-               gtk.STOCK_OPEN, gtk.RESPONSE_OK)
+    mode = gtk.FileChooserAction.OPEN
+
+    buttons = (gtk.STOCK_QUIT, gtk.ResponseType.CANCEL,
+               gtk.STOCK_OPEN, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
         BaseChooser.__init__(self, parent, title)
 
-        self.dialog.set_default_response(gtk.RESPONSE_OK)
+        self.dialog.set_default_response(gtk.ResponseType.OK)
         self.dialog.set_select_multiple(True)
 
         preview = gtk.Image()
@@ -125,13 +127,13 @@ class Chooser(BaseChooser):
         self.dialog.add_filter(filter)
 
 class DirChooser(BaseChooser):
-    mode = gtk.FILE_CHOOSER_ACTION_SAVE
-    buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-               gtk.STOCK_SAVE, gtk.RESPONSE_OK)
+    mode = gtk.FileChooserAction.SAVE
+    buttons = (gtk.STOCK_CANCEL, gtk.ResponseType.CANCEL,
+               gtk.STOCK_SAVE, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
         BaseChooser.__init__(self, parent, title)
-        self.dialog.set_default_response(gtk.RESPONSE_OK)
+        self.dialog.set_default_response(gtk.ResponseType.OK)
 
     def set_current_name(self, filename):
         self.dialog.set_current_name(filename)
