@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #    cropgui, a graphical front-end for lossless jpeg cropping
 #    Copyright (C) 2009 Jeff Epler <jepler@unpythonic.net>
 #    This program is free software; you can redistribute it and/or modify
@@ -18,60 +18,60 @@
 from cropgui_common import *
 from cropgui_common import _
 
-import Tkinter
-import ImageTk
-import tkFileDialog
+import tkinter
+from PIL import ImageTk
+import tkinter.filedialog
 import sys
 import os
 import signal
 import log
 
-app = Tkinter.Tk()
+app = tkinter.Tk()
 app.wm_title(_("CropGUI -- lossless cropping and rotation of jpeg files"))
 app.wm_iconname(_("CropGUI"))
 
-preview = Tkinter.Label(app)
+preview = tkinter.Label(app)
 preview.pack(side="bottom")
 
-do_crop = Tkinter.Button(app, text="Crop")
+do_crop = tkinter.Button(app, text="Crop")
 do_crop.pack(side="left")
 
-crop169_button = Tkinter.Menubutton(app, text="16:9")
+crop169_button = tkinter.Menubutton(app, text="16:9")
 crop169_button.pack(side="left")
-crop169 = Tkinter.Menu(crop169_button)
+crop169 = tkinter.Menu(crop169_button)
 crop169_button.config(menu=crop169)
 
-crop85_button = Tkinter.Menubutton(app, text="8:5")
+crop85_button = tkinter.Menubutton(app, text="8:5")
 crop85_button.pack(side="left")
-crop85 = Tkinter.Menu(crop85_button)
+crop85 = tkinter.Menu(crop85_button)
 crop85_button.config(menu=crop85)
 
-crop32_button = Tkinter.Menubutton(app, text="3:2")
+crop32_button = tkinter.Menubutton(app, text="3:2")
 crop32_button.pack(side="left")
-crop32 = Tkinter.Menu(crop32_button)
+crop32 = tkinter.Menu(crop32_button)
 crop32_button.config(menu=crop32)
 
-crop43_button = Tkinter.Menubutton(app, text="4:3")
+crop43_button = tkinter.Menubutton(app, text="4:3")
 crop43_button.pack(side="left")
-crop43 = Tkinter.Menu(crop43_button)
+crop43 = tkinter.Menu(crop43_button)
 crop43_button.config(menu=crop43)
 
-crop11_button = Tkinter.Menubutton(app, text="1:1")
+crop11_button = tkinter.Menubutton(app, text="1:1")
 crop11_button.pack(side="left")
-crop11 = Tkinter.Menu(crop11_button)
+crop11 = tkinter.Menu(crop11_button)
 crop11_button.config(menu=crop11)
 
-crop34_button = Tkinter.Menubutton(app, text="3:4")
+crop34_button = tkinter.Menubutton(app, text="3:4")
 crop34_button.pack(side="left")
-crop34 = Tkinter.Menu(crop34_button)
+crop34 = tkinter.Menu(crop34_button)
 crop34_button.config(menu=crop34)
 
-crop23_button = Tkinter.Menubutton(app, text="2:3")
+crop23_button = tkinter.Menubutton(app, text="2:3")
 crop23_button.pack(side="left")
-crop23 = Tkinter.Menu(crop23_button)
+crop23 = tkinter.Menu(crop23_button)
 crop23_button.config(menu=crop23)
 
-info = Tkinter.Label(app)
+info = tkinter.Label(app)
 info.pack(side="left")
 
 task = CropTask(log)
@@ -95,7 +95,7 @@ class DragManager(DragManagerBase):
         w.bind("<Button1-Leave>", "#nothing")
         dummy_image = Image.new('L', (max_w/2,max_h/2), 0xff)
         self.dummy_tkimage = ImageTk.PhotoImage(dummy_image)
-        self.v = Tkinter.IntVar(app)
+        self.v = tkinter.IntVar(app)
         DragManagerBase.__init__(self)
 
     def image_set(self):
@@ -236,7 +236,7 @@ def image_names():
         for i in sys.argv[1:]: yield i
     else:
         while 1:
-            names = tkFileDialog.askopenfilenames(master=app,
+            names = tkinter.filedialog.askopenfilenames(master=app,
                 defaultextension=".jpg", multiple=1, parent=app,
                 filetypes=(
                     (_("JPEG Image Files"), ".jpg .JPG .jpeg .JPEG"),
@@ -297,7 +297,7 @@ try:
             cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
             target = base + "-crop" + ext
             command=['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name]
-        print " ".join(command)
+        print(" ".join(command))
         task.add(command, target)
 finally:
     task.done()

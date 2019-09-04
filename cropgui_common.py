@@ -18,7 +18,7 @@ from PIL import ImageFilter
 from PIL import ImageDraw
 import subprocess
 import threading
-import Queue
+import queue
 import os
 import math
 
@@ -35,7 +35,7 @@ def _(s): return s  # TODO: i18n
     DRAG_TL, DRAG_T, DRAG_TR,
     DRAG_L,  DRAG_C, DRAG_R,
     DRAG_BL, DRAG_B, DRAG_BR
-) = range(10)
+) = list(range(10))
 
 def describe_ratio(a, b):
     if a == 0 or b == 0: return "degenerate"
@@ -56,7 +56,7 @@ ncpus = ncpus()
 class CropTask(object):
     def __init__(self, log):
         self.log = log
-        self.tasks = Queue.Queue()
+        self.tasks = queue.Queue()
         self.threads = set(self.create_task() for i in range(ncpus))
         for t in self.threads: t.start()
 
@@ -144,7 +144,8 @@ class DragManagerBase(object):
 
     def get_screencorners(self):
         t, l, r, b = self.get_corners()
-        return t/self.scale, l/self.scale, r/self.scale, b/self.scale
+        return(int(t/int(self.scale)), int(l/int(self.scale)), 
+               int(r/int(self.scale)), int(b/int(self.scale)))
 
     def describe_ratio(self):
         w = self.right - self.left
@@ -276,8 +277,8 @@ class DragManagerBase(object):
             self.fixed_ratio = False
 
     def drag_continue(self, x, y):
-        dx = (x - self.x0) * self.scale
-        dy = (y - self.y0) * self.scale
+        dx = (x - self.x0) * int(self.scale)
+        dy = (y - self.y0) * int(self.scale)
         if self.fixed_ratio:
             ratio = (self.r0-self.l0) * 1. / (self.b0 - self.t0)
             if self.state in (DRAG_TR, DRAG_BL): ratio = -ratio
@@ -339,9 +340,9 @@ class DragManagerBase(object):
 
     def set_rotation(self, rotation):
         if rotation not in (1, 3, 6, 8):
-            raise ValueError, 'Unsupported rotation %r' % rotation
+            raise ValueError('Unsupported rotation %r' % rotation)
 
-        print "rotation", self.rotation, "->", rotation
+        print("rotation", self.rotation, "->", rotation)
         self._rotation = rotation
         self.image_or_rotation_changed()
 
@@ -352,14 +353,14 @@ class DragManagerBase(object):
 
 def image_rotation(i):
     if not hasattr(i, '_getexif'):
-        print "no getexif?", type(i), getattr(i, '_getexif', None)
+        print("no getexif?", type(i), getattr(i, '_getexif', None))
         return 1
     exif = i._getexif()
     if not isinstance(exif, dict):
-        print "not dict?", repr(exif)
+        print("not dict?", repr(exif))
         return 1
     result = exif.get(0x112, None)
-    print "image_rotation", result
+    print("image_rotation", result)
     return result or 1
 
 _desktop_name = None

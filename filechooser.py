@@ -28,7 +28,7 @@ from PIL import Image
 import cropgui_common
 
 def apply_rotation(rotation, image):
-    print "apply_rotation", rotation
+    print("apply_rotation", rotation)
     if rotation == 3: return image.transpose(Image.ROTATE_180)
     if rotation == 6: return image.transpose(Image.ROTATE_270)
     if rotation == 8: return image.transpose(Image.ROTATE_90)
@@ -62,8 +62,8 @@ def update_preview_cb(file_chooser, preview):
                 while len(image_cache) > LOW_WATER:
                     image_cache.popitem()
             image_cache[filename] = pixbuf
-        except IOError, detail:
-            print detail
+        except IOError as detail:
+            print(detail)
             preview.set_from_stock(gtk.STOCK_MISSING_IMAGE,
                 gtk.IconSize.LARGE_TOOLBAR)
         except:
