@@ -19,9 +19,10 @@ from cropgui_common import *
 from cropgui_common import _
 
 import gi
-from gi.repository import GObject as gobject
+#from gi.repository import GObject as gobject
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
+from gi.repository import GLib
 #import gtk.glade
 from gi.repository import Gdk as gdk
 import filechooser
@@ -146,7 +147,7 @@ class DragManager(DragManagerBase):
 
     def render(self):
         if self.idle is None:
-            self.idle = gobject.idle_add(self.do_render)
+            self.idle = GLib.idle_add(self.do_render)
 
     def do_render(self):
         if not self.idle:
@@ -199,7 +200,7 @@ class DragManager(DragManagerBase):
 
 
     def wait(self):
-        self.loop = gobject.MainLoop()
+        self.loop = GLib.MainLoop()
         self.result = -1
         self.loop.run()
         return self.result
