@@ -93,7 +93,7 @@ class DragManager(DragManagerBase):
         app.bind("<Escape>", self.escape)
         w.bind("<Button1-Enter>", "#nothing")
         w.bind("<Button1-Leave>", "#nothing")
-        dummy_image = Image.new('L', (max_w/2,max_h/2), 0xff)
+        dummy_image = Image.new('L', (int(max_w/2),int(max_h/2)), 0xff)
         self.dummy_tkimage = ImageTk.PhotoImage(dummy_image)
         self.v = tkinter.IntVar(app)
         DragManagerBase.__init__(self)
