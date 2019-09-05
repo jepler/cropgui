@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #    cropgui, a graphical front-end for lossless jpeg cropping
 #    Copyright (C) 2009 Jeff Epler <jepler@unpythonic.net>
 #    This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,10 @@ from cropgui_common import *
 from cropgui_common import _
 
 import gi
-from gi.repository import GObject as gobject
+#from gi.repository import GObject as gobject
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
+from gi.repository import GLib
 #import gtk.glade
 from gi.repository import Gdk as gdk
 import filechooser
@@ -40,7 +41,7 @@ def excepthook(exc_type, exc_obj, exc_tb):
     except NameError:
         w = None
     lines = traceback.format_exception(exc_type, exc_obj, exc_tb)
-    print "".join(lines)
+    print("".join(lines))
     m = gtk.MessageDialog(w,
                 gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
                 gtk.MessageType.ERROR, gtk.ButtonsType.OK,
@@ -146,7 +147,7 @@ class DragManager(DragManagerBase):
 
     def render(self):
         if self.idle is None:
-            self.idle = gobject.idle_add(self.do_render)
+            self.idle = GLib.idle_add(self.do_render)
 
     def do_render(self):
         if not self.idle:
@@ -199,7 +200,7 @@ class DragManager(DragManagerBase):
 
 
     def wait(self):
-        self.loop = gobject.MainLoop()
+        self.loop = GLib.MainLoop()
         self.result = -1
         self.loop.run()
         return self.result
@@ -209,8 +210,8 @@ max_w = gdk.Screen.width() - 64
 
 class App:
     def __init__(self):
-	self.builder = gtk.Builder()
-	self.builder.add_from_file(gladefile)
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(gladefile)
         #self.glade = gtk.glade.XML(gladefile)
         self.drag = DragManager(self)
         self.task = CropTask(self)
@@ -248,7 +249,7 @@ class App:
                 scale = max (scale, (drag.w-1)/max_w+1)
                 scale = max (scale, (drag.h-1)/max_h+1)
                 i.thumbnail((drag.w/scale, drag.h/scale))
-            except (IOError,), detail:
+            except (IOError,) as detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
                     gtk.MessageType.ERROR, gtk.ButtonsType.OK,
@@ -299,7 +300,7 @@ class App:
                 command = ['nice', 'convert']
                 if not rotation == "none": command.extend(['-rotate', rotation])
                 command.extend([image_name, '-crop', cropspec, target])
-            print " ".join(command)
+            print(" ".join(command))
             task.add(command, target)
 
     def image_names(self):
