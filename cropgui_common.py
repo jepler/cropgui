@@ -47,6 +47,20 @@ def clamp(value, low, high):
     if high < value: return high
     return value
 
+def nextPowerOf2(n):
+    count = 0;
+    ceiln = math.ceil(n)
+    # First ceiln in the below condition is for the
+    # case where ceiln is 0
+    if (ceiln and not(ceiln & (ceiln - 1))):
+        return ceiln
+
+    while (ceiln != 0):
+        ceiln >>= 1
+        count += 1
+
+    return 1 << count;
+
 def ncpus():
     if os.path.exists("/proc/cpuinfo"):
         return open("/proc/cpuinfo").read().count("bogomips") or 1

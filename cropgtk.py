@@ -246,8 +246,8 @@ class App:
                 i = Image.open(image_name)
                 drag.w, drag.h = i.size
                 scale = 1
-                scale = max (scale, (drag.w-1)/max_w+1)
-                scale = max (scale, (drag.h-1)/max_h+1)
+                scale = max (scale, nextPowerOf2((drag.w-1)/(max_w+1)))
+                scale = max (scale, nextPowerOf2((drag.h-1)/(max_h+1)))
                 i.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,) as detail:
                 m = gtk.MessageDialog(self['window1'],
