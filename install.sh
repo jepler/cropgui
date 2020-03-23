@@ -12,7 +12,7 @@ default_flavor () {
 }
 
 site_packages () {
-    $PYTHON -c 'import distutils.sysconfig; print distutils.sysconfig.get_python_lib()'
+    $PYTHON -c 'import distutils.sysconfig; print(distutils.sysconfig.get_python_lib())'
 }
 
 usage () {
