@@ -1,5 +1,5 @@
 #!/bin/sh
-PYTHON=python2
+PYTHON=python3
 BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python SHAREDIR=$HOME/share
 
 default_flavor () {
