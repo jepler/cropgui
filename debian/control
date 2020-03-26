@@ -1,13 +1,13 @@
 Source: cropgui
 Section: graphics
-Priority: extra
+Priority: optional
 Maintainer: Jeff Epler <jepler@unpythonic.net>
-Build-Depends: python, debhelper, python-support | dh-python
-XS-Python-Version: current
-Standards-Version: 2.0.0-rc
+Build-Depends: debhelper (>=9), dh-python, python3
+Standards-Version: 3.9.8
+Homepage: https://github.com/jepler/cropgui
 
 Package: cropgui
-Depends: python3-pil, python3-gi, libjpeg-turbo-progs | libjpeg-progs, libimage-exiftool-perl, imagemagick
+Depends: ${python3:Depends}, python3-pil, python3-gi, libjpeg-turbo-progs | libjpeg-progs, libimage-exiftool-perl, imagemagick
 Section: graphics
 Architecture: all
-Description: interactive tool to losslessly resize jpeg images
+Description: A GTK GUI for lossless JPEG cropping

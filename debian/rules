@@ -1,29 +1,8 @@
 #!/usr/bin/make -f
+#export DH_VERBOSE = 1
 
-PREFIX=debian/tmp/usr
+%:
+	dh $@ --with python3
 
-build:; @true
-install:
-	./install.sh -f gtk -t debian/tmp -p /usr
-
-binary-indep: install
-	(cd debian/tmp; find -not -type d) > debian/cropgui.files
-	dh_movefiles
-	dh_python2
-	dh_installchangelogs
-	dh_installdocs
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep
-
-clean:
-	dh_clean
-	rm -rf build dist 
-	rm -f debian/postinst.debhelper debian/prerm.debhelper
-
-.PHONY: build install binary binary-indep clean
-
-# vim:noet:ts=8:sts=8:sw=8:
+override_dh_auto_install:
+	./install.sh -f gtk -p /usr -t $(CURDIR)/debian/cropgui
