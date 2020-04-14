@@ -244,6 +244,7 @@ class App:
             self.set_busy()
             try:
                 i = Image.open(image_name)
+                drag.round_x, drag.round_y = image_round(i)
                 drag.w, drag.h = i.size
                 scale = 1
                 scale = max (scale, nextPowerOf2((drag.w-1)/(max_w+1)))

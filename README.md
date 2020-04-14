@@ -7,8 +7,8 @@ write the result.
 
 It turns out that debian's jpegtran has a "-crop" flag which performs lossless
 cropping of jpeg images as long as the crop is to a multiple of what the
-manpage calls the "iMCU boundary", a (usually?) 8x8 block of pixels. This
-feature may have been pioneered by Guido of jpegclub.org some years ago.
+manpage calls the "iMCU boundary", usually an 8x8 or 16x16 block of pixels.
+This feature may have been pioneered by Guido of jpegclub.org some years ago.
 
 There's apparently a nice Windows front-end to this program, but I didn't find
 a Linux one. So I wrote one! It's pretty basic, but it gets the job done. You

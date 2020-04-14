@@ -106,7 +106,8 @@ class DragManagerBase(object):
         self.render_flag = 0
         self.show_handles = True
         self.state = DRAG_NONE
-        self.round = 8
+        self.round_x = None
+        self.round_y = None
         self.image = None
         self.w = 0
         self.h = 0
@@ -145,10 +146,15 @@ class DragManagerBase(object):
         self.image_set()
         self.render()
 
-    def fix(self, a, b, lim):
+    def fix(self, a, b, lim, r):
+        """
+        a, b: interval to fix
+        lim: upper bound
+        r: rounding size
+        """
         a, b = sorted((int(a), int(b)))
-        a = (a // self.round)*self.round
-        b = ((b + self.round - 1) // self.round)*self.round
+        a = (a // r) * r
+        b = ((b + r - 1) // r) * r
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
         return a, b
@@ -198,8 +204,8 @@ class DragManagerBase(object):
         self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):
-        self.top, self.bottom = self.fix(top, bottom, self.h)
-        self.left, self.right = self.fix(left, right, self.w)
+        self.top, self.bottom = self.fix(top, bottom, self.h, self.round_y)
+        self.left, self.right = self.fix(left, right, self.w, self.round_x)
         self.render()
 
     def get_image(self):
@@ -332,8 +338,12 @@ class DragManagerBase(object):
         self.set_crop(self.top, self.left, self.right, self.bottom)
         self.state = DRAG_NONE
 
-    def rotate_ccw(self):
+    def _flip_dimensions(self):
         self.w, self.h = self.h, self.w
+        self.round_x, self.round_y = self.round_y, self.round_x
+
+    def rotate_ccw(self):
+        self._flip_dimensions()
         r = self.rotation
         if   r == 1: r = 8
         elif r == 8: r = 3
@@ -342,7 +352,7 @@ class DragManagerBase(object):
         self.rotation = r
 
     def rotate_cw(self):
-        self.w, self.h = self.h, self.w
+        self._flip_dimensions()
         r = self.rotation
         if   r == 1: r = 6
         elif r == 6: r = 3
@@ -376,6 +386,17 @@ def image_rotation(i):
     result = exif.get(0x112, None)
     print("image_rotation", result)
     return result or 1
+
+
+def image_round(i):
+    """Return (horizontal block size, vertical block size)"""
+    if i.format == "JPEG":
+        x = max(xsamp for _id, xsamp, ysamp, _qtable in i.layer)
+        y = max(ysamp for _id, xsamp, ysamp, _qtable in i.layer)
+        return x * 8, y * 8
+    else:
+        return 1, 1
+
 
 _desktop_name = None
 def desktop_name():
