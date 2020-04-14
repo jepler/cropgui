@@ -146,19 +146,19 @@ class DragManagerBase(object):
         self.render()
 
     def fix(self, a, b, lim):
-        a, b = sorted((b,a))
+        a, b = sorted((int(a), int(b)))
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = (a / self.round)*self.round
-        b = (b / self.round)*self.round
-        return int(a), int(b)
+        a = (a // self.round)*self.round
+        b = (b // self.round)*self.round
+        return a, b
 
     def get_corners(self):
         return self.top, self.left, self.right, self.bottom
 
     def get_screencorners(self):
         t, l, r, b = self.get_corners()
-        return(int(t/int(self.scale)), int(l/int(self.scale)), 
+        return(int(t/int(self.scale)), int(l/int(self.scale)),
                int(r/int(self.scale)), int(b/int(self.scale)))
 
     def describe_ratio(self):
