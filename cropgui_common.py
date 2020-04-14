@@ -13,6 +13,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from collections import namedtuple
+
 from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageDraw
@@ -67,6 +69,13 @@ def ncpus():
     return 1
 ncpus = ncpus()
 
+
+CropRequest = namedtuple(
+    "CropRequest",
+    ["image", "image_name", "corners", "rotation", "target"]
+)
+
+
 class CropTask(object):
     def __init__(self, log):
         self.log = log
@@ -86,17 +95,55 @@ class CropTask(object):
     def count(self):
         return len(self.tasks) + len(self.threads)
 
-    def add(self, args, target):
-        self.tasks.put((args, target))
+    def add(self, task):
+        self.tasks.put(task)
 
     def runner(self):
         while 1:
             task = self.tasks.get()
             if task is None:
                 break
-            command, target = task
+            image = task.image
+            image_name = task.image_name
+            rotation_int = task.rotation
+            target = task.target
             shortname = os.path.basename(target)
             self.log.progress(_("Cropping to %s") % shortname)
+
+            t, l, r, b = task.corners
+            cropspec = "%dx%d+%d+%d" % (r - l, b - t, l, t)
+
+            if rotation_int == 3:
+                rotation = "180"
+            elif rotation_int == 6:
+                rotation = "90"
+            elif rotation_int == 8:
+                rotation = "270"
+            else:
+                rotation = "none"
+
+            # Copy file if no cropping or rotation.
+            if (r + b - l - t) == (image.width + image.height) and rotation == "none":
+                command = ["nice", "cp", image_name, target]
+            # JPEG crop uses jpegtran
+            elif image.format == "JPEG":
+                command = ["nice", "jpegtran"]
+                if rotation != "none":
+                    command += ["-rotate", rotation]
+                command += [
+                    "-copy", "all",
+                    "-crop", cropspec,
+                    "-outfile", target,
+                    image_name,
+                ]
+            # All other images use ImageMagick convert.
+            else:
+                command = ["nice", "convert"]
+                if rotation != "none":
+                    command += ["-rotate", rotation]
+                command += [image_name, "-crop", cropspec, target]
+
+            print(" ".join(command))
             subprocess.call(command)
             subprocess.call(["exiftool", "-overwrite_original", "-Orientation=1", "-n", target])
             self.log.log(_("Cropped to %s") % shortname)

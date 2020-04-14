@@ -243,13 +243,14 @@ class App:
                 _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()
             try:
-                i = Image.open(image_name)
-                drag.round_x, drag.round_y = image_round(i)
-                drag.w, drag.h = i.size
+                image = Image.open(image_name)
+                drag.round_x, drag.round_y = image_round(image)
+                drag.w, drag.h = image.size
                 scale = 1
                 scale = max (scale, nextPowerOf2((drag.w-1)/(max_w+1)))
                 scale = max (scale, nextPowerOf2((drag.h-1)/(max_h+1)))
-                i.thumbnail((drag.w/scale, drag.h/scale))
+                thumbnail = image.copy()
+                thumbnail.thumbnail((drag.w/scale, drag.h/scale))
             except (IOError,) as detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
@@ -260,9 +261,9 @@ class App:
                 m.destroy()
                 continue
             image_type = imghdr.what(image_name)
-            drag.image = i
+            drag.image = thumbnail
             drag.rotation = 1
-            rotation = image_rotation(i)
+            rotation = image_rotation(image)
             if rotation in (3,6,8):
                 while drag.rotation != rotation:
                     drag.rotate_ccw()
@@ -275,34 +276,18 @@ class App:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "next" / escape
 
-            t, l, r, b = drag.top, drag.left, drag.right, drag.bottom
-            cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
-
-            if   drag.rotation == 3: rotation = '180'
-            elif drag.rotation == 6: rotation = '90'
-            elif drag.rotation == 8: rotation = '270'
-            else: rotation = "none"
-
             target = self.output_name(image_name,image_type)
             if not target:
                 self.log("Skipped %s" % os.path.basename(image_name))
                 continue # user hit "cancel" on save dialog
 
-            # Copy file if no cropping or rotation.
-            if (r+b-l-t) == (drag.w+drag.h) and rotation =="none":
-                command = ['nice', 'cp' , image_name, target]
-            # JPEG crop uses jpegtran
-            elif image_type == "jpeg":
-                command = ['nice', 'jpegtran']
-                if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend(['-copy', 'all', '-crop', cropspec,'-outfile', target, image_name])
-            # All other images use imagemagic convert.
-            else:
-                command = ['nice', 'convert']
-                if not rotation == "none": command.extend(['-rotate', rotation])
-                command.extend([image_name, '-crop', cropspec, target])
-            print(" ".join(command))
-            task.add(command, target)
+            task.add(CropRequest(
+                image=image,
+                image_name=image_name,
+                corners=drag.get_corners(),
+                rotation=drag.rotation,
+                target=target,
+            ))
 
     def image_names(self):
         if len(sys.argv) > 1:

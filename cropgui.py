@@ -268,18 +268,19 @@ try:
     for image_name in image_names():
         # load new image
         set_busy()
-        i = Image.open(image_name)
+        image = Image.open(image_name)
 
-        drag.round_x, drag.round_y = image_round(i)
-        drag.w, drag.h = i.size
+        drag.round_x, drag.round_y = image_round(image)
+        drag.w, drag.h = image.size
         # compute scale to fit image on display
         drag.scale=1
         drag.scale = max (drag.scale, (drag.w-1)/max_w+1)
         drag.scale = max (drag.scale, (drag.h-1)/max_h+1)
 
         # put image into drag object
-        i.thumbnail((drag.w/drag.scale, drag.h/drag.scale))
-        drag.image = i
+        thumbnail = image.copy()
+        thumbnail.thumbnail((drag.w/drag.scale, drag.h/drag.scale))
+        drag.image = thumbnail
 
         # get user input
         set_busy(0)
@@ -288,18 +289,15 @@ try:
         if v == -1: break   # user closed app
         if v == 0: continue # user hit "next" / escape
 
-        t, l, r, b = drag.get_corners()
-        # Copy file if no cropping.
-        if (r+b-l-t) == (drag.w+drag.h):
-            command = ['nice', 'cp' , image_name, target]
-        # call jpegtran
-        else:
-            base, ext = os.path.splitext(image_name)
-            cropspec = "%dx%d+%d+%d" % (r-l, b-t, l, t)
-            target = base + "-crop" + ext
-            command=['nice', 'jpegtran', '-copy', 'all', '-crop', cropspec, '-outfile', target, image_name]
-        print(" ".join(command))
-        task.add(command, target)
+        base, ext = os.path.splitext(image_name)
+        target = base + "-crop" + ext
+        task.add(CropRequest(
+            image=image,
+            image_name=image_name,
+            corners=drag.get_corners(),
+            rotation=drag.rotation,
+            target=target,
+        ))
 finally:
     task.done()
 
