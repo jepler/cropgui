@@ -63,6 +63,31 @@ def nextPowerOf2(n):
 
     return 1 << count;
 
+
+def get_cropspec(image, corners, rotation):
+    t, l, r, b = corners
+    w = r - l
+    h = b - t
+
+    # The coordinates passed to jpegtran are interpreted post-rotation.
+    # Non-whole blocks are already imperfectly rotated by being left on the
+    # side, so we need to subtract them
+    if image.format == "JPEG":
+        round_x, round_y = image_round(image)
+        orig_w, orig_h = image.size
+        if rotation in (8, 6):
+            orig_w, orig_h = orig_h, orig_w
+            round_x, round_y = round_y, round_x
+        if rotation in (3, 8):
+            t -= orig_h % round_y
+        if rotation in (3, 6):
+            l -= orig_w % round_x
+        assert t >= 0, "t < 0 should be handled in fix(): {}".format(t)
+        assert l >= 0, "l < 0 should be handled in fix(): {}".format(l)
+
+    return "%dx%d+%d+%d" % (w, h, l, t)
+
+
 def ncpus():
     if os.path.exists("/proc/cpuinfo"):
         return open("/proc/cpuinfo").read().count("bogomips") or 1
@@ -111,7 +136,7 @@ class CropTask(object):
             self.log.progress(_("Cropping to %s") % shortname)
 
             t, l, r, b = task.corners
-            cropspec = "%dx%d+%d+%d" % (r - l, b - t, l, t)
+            cropspec = get_cropspec(image, task.corners, rotation_int)
 
             if rotation_int == 3:
                 rotation = "180"
@@ -181,10 +206,8 @@ class DragManagerBase(object):
     def image_or_rotation_changed(self):
         self._image = image = self.apply_rotation(self._orig_image)
         self.apply_rotation(image)
-        self.top = 0
-        self.left = 0
-        self.right = self.w
-        self.bottom = self.h
+        self.top, self.bottom = self.fix(0, self.h, self.h, self.round_y, self.rotation in (3, 8))
+        self.left, self.right = self.fix(0, self.w, self.w, self.round_x, self.rotation in (3, 6))
         blurred = image.copy()
         mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
         self.blurred = image.copy().filter(
@@ -193,17 +216,25 @@ class DragManagerBase(object):
         self.image_set()
         self.render()
 
-    def fix(self, a, b, lim, r):
+    def fix(self, a, b, lim, r, reverse):
         """
         a, b: interval to fix
         lim: upper bound
         r: rounding size
+        reverse: True to treat the upper bound as the origin
         """
+        if reverse:
+            offset = lim % r
+        else:
+            offset = 0
         a, b = sorted((int(a), int(b)))
-        a = (a // r) * r
-        b = ((b + r - 1) // r) * r
-        a = clamp(a, 0, lim)
-        b = clamp(b, 0, lim)
+        a = ((a - offset) // r) * r + offset
+        b = ((b - offset + r - 1) // r) * r + offset
+        # jpegtran handles non-whole blocks by leaving them on the edge of the
+        # image, away from the rotated position of their old neighbors.
+        # Keeping them isn't useful, so clamp them off.
+        a = clamp(a, offset if reverse else 0, lim)
+        b = clamp(b, offset if reverse else 0, lim)
         return a, b
 
     def get_corners(self):
@@ -251,8 +282,8 @@ class DragManagerBase(object):
         self.set_crop (top, left, right, bottom)
 
     def set_crop(self, top, left, right, bottom):
-        self.top, self.bottom = self.fix(top, bottom, self.h, self.round_y)
-        self.left, self.right = self.fix(left, right, self.w, self.round_x)
+        self.top, self.bottom = self.fix(top, bottom, self.h, self.round_y, self.rotation in (3, 8))
+        self.left, self.right = self.fix(left, right, self.w, self.round_x, self.rotation in (3, 6))
         self.render()
 
     def get_image(self):
