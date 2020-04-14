@@ -147,10 +147,10 @@ class DragManagerBase(object):
 
     def fix(self, a, b, lim):
         a, b = sorted((int(a), int(b)))
+        a = (a // self.round)*self.round
+        b = ((b + self.round - 1) // self.round)*self.round
         a = clamp(a, 0, lim)
         b = clamp(b, 0, lim)
-        a = (a // self.round)*self.round
-        b = (b // self.round)*self.round
         return a, b
 
     def get_corners(self):
