@@ -7,8 +7,8 @@ write the result.
 
 It turns out that debian's jpegtran has a "-crop" flag which performs lossless
 cropping of jpeg images as long as the crop is to a multiple of what the
-manpage calls the "iMCU boundary", a (usually?) 8x8 block of pixels. This
-feature may have been pioneered by Guido of jpegclub.org some years ago.
+manpage calls the "iMCU boundary", usually an 8x8 or 16x16 block of pixels.
+This feature may have been pioneered by Guido of jpegclub.org some years ago.
 
 There's apparently a nice Windows front-end to this program, but I didn't find
 a Linux one. So I wrote one! It's pretty basic, but it gets the job done. You
@@ -22,9 +22,9 @@ overwrite an earlier cropped version). For example, if the input is "moon.jpg"
 then the output is "moon-cropped.jpg".
 
 Images are automatically scaled by a power of 2 (e.g., 1/2, 1/4 or 1/8) in
-order to fit onscreen. After releasing the mouse button, the cropped image
-boundary may move a little bit; this represents the limitation that the
-upper-left corner must be at a multiple of 8x8 original image pixels.
+order to fit onscreen. While dragging, the cropped image boundary will snap
+to a multiple of 8 or 16 pixels; this represents the limitation that the
+upper-left corner must be at a multiple of the iMCU blocks.
 
 ## PREREQUISITES
 
