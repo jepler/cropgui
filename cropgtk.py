@@ -321,7 +321,7 @@ class App:
         if image_type == "jpeg":
             if e.lower() in ['.jpg', '.jpeg']: return r
             return e + ".jpg"
-        elif e.lower() == image_type: return r
+        elif e.lower() == "." + image_type: return r
         else: return e + "." + image_type
 
 app = App()
