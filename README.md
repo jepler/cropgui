@@ -29,7 +29,8 @@ upper-left corner must be at a multiple of the iMCU blocks.
 ## PREREQUISITES
 
 cropgui is written in Python and requires the following packages:
- * Debian: python, python-tkinter, python-imaging, python-imaging-tk,
+ * Debian: python3, python3-pil, python3-pil.imagetk,
+   (python-tkinter, python-imaging, python-imaging-tk on older systems),
    libjpeg-progs, and libimage-exiftool-perl.
  * Fedora: python2-pillow, libjpeg-turbo-utils, pygtk2,
    pygtk2-libglade, ImageMagick, and perl-Image-ExifTool.
@@ -38,6 +39,7 @@ The specific external programs required are:
  * `jpegtran` to crop jpeg images (debian package: libjpeg-turbo-progs or libjpeg-progs)
  * `exiftool` to clear the EXIF rotation flag from jpeg output images (debian package: libimage-exiftool-perl)
  * `convert` to rotate and crop other image types (debian package: imagemagick or graphicsmagick-imagemagick-compat)
+ * `magick` on Windows (download from ImageMagick and install)
 
 ## INSTALLATION
 

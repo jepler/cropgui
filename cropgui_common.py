@@ -18,6 +18,7 @@ from collections import namedtuple
 from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageDraw
+import platform
 import subprocess
 import threading
 import queue
@@ -150,9 +151,11 @@ class CropTask(object):
             # Copy file if no cropping or rotation.
             if (r + b - l - t) == (image.width + image.height) and rotation == "none":
                 command = ["nice", "cp", image_name, target]
+                if platform.system() == 'Windows': command = ["copy", image_name, target]
             # JPEG crop uses jpegtran
             elif image.format == "JPEG":
                 command = ["nice", "jpegtran"]
+                if platform.system() == 'Windows': command = ["jpegtran"]
                 if rotation != "none":
                     command += ["-rotate", rotation]
                 command += [
@@ -164,6 +167,7 @@ class CropTask(object):
             # All other images use ImageMagick convert.
             else:
                 command = ["nice", "convert"]
+                if platform.system() == 'Windows': command = ["magick"]
                 if rotation != "none":
                     command += ["-rotate", rotation]
                 command += [image_name, "-crop", cropspec, target]

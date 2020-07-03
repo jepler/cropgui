@@ -14,18 +14,23 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import atexit
-import fcntl
 import os
+import platform
 import struct
 import sys
-import termios
 import threading
+try:
+    import fcntl
+    import termios
+except:
+    pass
 
 lock = threading.RLock()
 
 screen_width = screen_height = None
 def screen_size():
     if not os.isatty(2): return 0, 0
+    if platform.system() == 'Windows': return 80, 25
     res = fcntl.ioctl(2, termios.TIOCGWINSZ, "\0" * 4)
     return struct.unpack("hh", res)
 screen_width, screen_height = screen_size()
