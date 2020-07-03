@@ -274,8 +274,8 @@ try:
         drag.w, drag.h = image.size
         # compute scale to fit image on display
         drag.scale=1
-        drag.scale = max (drag.scale, (drag.w-1)/max_w+1)
-        drag.scale = max (drag.scale, (drag.h-1)/max_h+1)
+        drag.scale = max (drag.scale, (drag.w-1)//max_w+1)
+        drag.scale = max (drag.scale, (drag.h-1)//max_h+1)
 
         # put image into drag object
         thumbnail = image.copy()
