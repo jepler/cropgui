@@ -92,7 +92,7 @@ class Chooser(BaseChooser):
                gtk.STOCK_OPEN, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
-        BaseChooser.__init__(self, parent, title)
+        BaseChooser.__init__(self, title, parent)
 
         self.dialog.set_default_response(gtk.ResponseType.OK)
         self.dialog.set_select_multiple(True)
