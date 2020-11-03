@@ -293,7 +293,7 @@ class App:
         if len(sys.argv) > 1:
             for i in sys.argv[1:]: yield i
         else:
-            c = filechooser.Chooser(self['window1'], _("Select images to crop"))
+            c = filechooser.Chooser(_("Select images to crop"), self['window1'])
             while 1:
                 files = c.run()
                 if not files: break
@@ -309,7 +309,7 @@ class App:
         if os.access(d, os.W_OK): return os.path.join(d, j)
         title = _('Save cropped version of %s') % i
         if self.dirchooser is None:
-            self.dirchooser = filechooser.DirChooser(self['window1'], title)
+            self.dirchooser = filechooser.DirChooser(title, self['window1'])
             self.dirchooser.set_current_folder(desktop_name())
         else:
             self.dirchooser.set_title(title)
