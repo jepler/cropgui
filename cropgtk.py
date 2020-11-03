@@ -132,6 +132,10 @@ class DragManager(DragManagerBase):
         self.result = 0
         self.loop.quit()
 
+    def save_and_stay(self, *args):
+        self.result = 2
+        self.loop.quit()
+
     def close(self, *args):
         self.result = -1
         self.loop.quit()
@@ -139,8 +143,18 @@ class DragManager(DragManagerBase):
     def key(self, w, e):
         if e.keyval == gdk.KEY_Escape: self.escape()
         elif e.keyval == gdk.KEY_Return: self.done()
-        elif e.string and e.string in ',<': self.rotate_ccw()
-        elif e.string and e.string in '.>': self.rotate_cw()
+        elif e.string:
+            if e.string == 'n': self.escape()
+            elif e.string == 'q': self.close()
+            elif e.string == 's': self.save_and_stay()
+            elif e.string in ',<': self.rotate_ccw()
+            elif e.string in '.>': self.rotate_cw()
+        # Don't know whether other event handlers need it too, but if
+        # this doesn't return True (True prevents further handlers from
+        # being invoked), a return somehow double-triggers self.done(),
+        # skipping the next image in a multi-file invocation.  Not clear
+        # what's going on, but this stops it.
+        return True
 
     def image_set(self):
         self.render()
@@ -238,6 +252,7 @@ class App:
         drag = self.drag
         task = self.task
 
+        prev_name = None
         for image_name in self.image_names():
             self['window1'].set_title(
                 _("%s - CropGTK") % os.path.basename(image_name))
@@ -268,26 +283,32 @@ class App:
                 while drag.rotation != rotation:
                     drag.rotate_ccw()
             drag.scale = scale
-            self.set_busy(0)
-            v = self.drag.wait()
-            self.set_busy()
-            if v == -1: break   # user closed app
-            if v == 0:
-                self.log("Skipped %s" % os.path.basename(image_name))
-                continue # user hit "next" / escape
 
-            target = self.output_name(image_name,image_type)
-            if not target:
-                self.log("Skipped %s" % os.path.basename(image_name))
-                continue # user hit "cancel" on save dialog
-
-            task.add(CropRequest(
-                image=image,
-                image_name=image_name,
-                corners=drag.get_corners(),
-                rotation=drag.rotation,
-                target=target,
-            ))
+            v = 2
+            while v == 2:
+                self.set_busy(0)
+                v = self.drag.wait()
+                self.set_busy()
+                if v == -1: break      # user closed app
+                if v == 0:
+                    self.log("Skipped %s" % os.path.basename(image_name))
+                    continue           # user hit "next" / escape
+                if v == 2: # save but stick with this image
+                    target = self.output_name(image_name,image_type,True,prev_name)
+                    prev_name = target
+                else:
+                    target = self.output_name(image_name,image_type)
+                if not target:
+                    self.log("Skipped %s" % os.path.basename(image_name))
+                    continue # user hit "cancel" on save dialog
+                task.add(CropRequest(
+                    image=image,
+                    image_name=image_name,
+                    corners=drag.get_corners(),
+                    rotation=drag.rotation,
+                    target=target,
+                ))
+            if v == -1: break # user closed app
 
     def image_names(self):
         if len(sys.argv) > 1:
@@ -299,20 +320,24 @@ class App:
                 if not files: break
                 for i in files: yield i
 
-    def output_name(self, image_name, image_type):
+    def output_name(self, image_name, image_type, chooser=False, prev_name=None):
         image_name = os.path.abspath(image_name)
-        d = os.path.dirname(image_name)
         i = os.path.basename(image_name)
-        j = os.path.splitext(i)[0]
-        if j.endswith('-crop'): j += os.path.splitext(i)[1]
-        else: j += "-crop" + os.path.splitext(i)[1]
-        if os.access(d, os.W_OK): return os.path.join(d, j)
+        if chooser and prev_name is not None:
+            d = os.path.dirname(prev_name)
+            j = os.path.basename(prev_name)
+        else:
+            d = os.path.dirname(image_name)
+            j = os.path.splitext(i)[0]
+            if j.endswith('-crop'): j += os.path.splitext(i)[1]
+            else: j += "-crop" + os.path.splitext(i)[1]
+            if os.access(d, os.W_OK) and not chooser: return os.path.join(d, j)
         title = _('Save cropped version of %s') % i
         if self.dirchooser is None:
             self.dirchooser = filechooser.DirChooser(title, self['window1'])
-            self.dirchooser.set_current_folder(desktop_name())
         else:
             self.dirchooser.set_title(title)
+        self.dirchooser.set_current_folder(d if os.access(d, os.W_OK) else desktop_name())
         self.dirchooser.set_current_name(j)
         r = self.dirchooser.run()
         if not r: return ''
