@@ -47,21 +47,21 @@ if [ -z "$FLAVOR" ]; then FLAVOR=`default_flavor`; fi
 mkdir -p $TARGET$BINDIR $TARGET$LIBDIR $TARGET$SHAREDIR/applications \
     $TARGET$SHAREDIR/pixmaps
 
-cp cropgui.desktop $TARGET$SHAREDIR/applications
-cp cropgui.png $TARGET$SHAREDIR/pixmaps
+install --mode=644 cropgui.desktop $TARGET$SHAREDIR/applications
+install --mode=644 cropgui.png $TARGET$SHAREDIR/pixmaps
 
 case $FLAVOR in
 gtk)
     echo "Installing gtk version of cropgui"
-    cp cropgtk.py $TARGET$BINDIR/cropgui && \
-    cp cropgui_common.py filechooser.py cropgui.glade \
+    install --mode=755 cropgtk.py $TARGET$BINDIR/cropgui && \
+    install --mode=644 cropgui_common.py filechooser.py cropgui.glade \
         stock-rotate-90-16.png stock-rotate-270-16.png \
         $TARGET$LIBDIR
 ;;
 tk)
     echo "Installing tkinter version of cropgui"
-    cp cropgui.py $TARGET$BINDIR/cropgui && \
-    cp log.py cropgui_common.py $TARGET$LIBDIR
+    install --mode=755 cropgui.py $TARGET$BINDIR/cropgui && \
+    install --mode=644 log.py cropgui_common.py $TARGET$LIBDIR
 ;;
 *)
     echo "Unknown flavor $FLAVOR"

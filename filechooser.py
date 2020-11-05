@@ -73,6 +73,9 @@ def update_preview_cb(file_chooser, preview):
 
 class BaseChooser:
     def __init__(self, title, parent):
+# Gnome's "attach-modal-dialogs" can be set to false using
+# gnome-tweak-tool in order to enable movable modal dialogs.  No idea
+# how to do that app-specifically though.
         self.dialog = dialog = \
             gtk.FileChooserDialog(title, parent, self.mode, self.buttons)
 
@@ -92,7 +95,7 @@ class Chooser(BaseChooser):
                gtk.STOCK_OPEN, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
-        BaseChooser.__init__(self, parent, title)
+        BaseChooser.__init__(self, title, parent)
 
         self.dialog.set_default_response(gtk.ResponseType.OK)
         self.dialog.set_select_multiple(True)
@@ -132,8 +135,9 @@ class DirChooser(BaseChooser):
                gtk.STOCK_SAVE, gtk.ResponseType.OK)
 
     def __init__(self, title, parent):
-        BaseChooser.__init__(self, parent, title)
+        BaseChooser.__init__(self, title, parent)
         self.dialog.set_default_response(gtk.ResponseType.OK)
+        self.dialog.set_do_overwrite_confirmation(True)
 
     def set_current_name(self, filename):
         self.dialog.set_current_name(filename)
