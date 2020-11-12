@@ -69,9 +69,16 @@ def get_cropspec(image, corners, rotation):
     t, l, r, b = corners
     w = r - l
     h = b - t
-    # Technically this should produce perfect crops, but jpegtran is broken
-    # and so mistakenly rounds out fractional crops on flipped images.  Sigh.
-    return "%dx%d+%d+%d" % (w, h, l, t)
+    # Technically these parameters should straightforwardly produce perfect
+    # crops, but jpegtran is broken here in two regards: (1) it doesn't
+    # recognise perfect rotated crops as such, so the '-perfect' switch
+    # erroneously rejects correctly ICMU-aligned rotate-and-crop commands, and
+    # (2) it mistakenly rounds out crops on rotated/flipped images so that even
+    # the bottom right corner is ICMU-aligned.  Sigh.  Adding the 'f' suffixes
+    # to the dimensions here at least solves (2), and seems to produce the same
+    # results as you get by manually constructing a pipeline of '-perfect'
+    # command lines.
+    return "%dfx%df+%d+%d" % (w, h, l, t)
 
 
 def ncpus():
