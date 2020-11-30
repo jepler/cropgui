@@ -179,9 +179,22 @@ class DragManagerBase(object):
         self.image = None
         self.w = 0
         self.h = 0
+        self.left = self.right = self.top = self.bottom = 0
+        self.prev_w = self.prev_h = 0
+        self.prev_top = self.prev_bottom = 0
+        self.prev_left = self=prev_right = 0
+
+    def save_prev_crop(self):
+        self.prev_w = self.w
+        self.prev_h = self.h
+        self.prev_top = self.top
+        self.prev_bottom = self.bottom
+        self.prev_left = self.left
+        self.prev_right = self.right
 
     def set_image(self, image):
         if image is None:
+            # XXX Why are left,right,bottom deleted?
             if hasattr(self, 'left'): del self.left
             if hasattr(self, 'right'): del self.right
             if hasattr(self, 'bottom'): del self.bottom
@@ -201,8 +214,13 @@ class DragManagerBase(object):
 
     def image_or_rotation_changed(self):
         self._image = image = self.apply_rotation(self._orig_image)
-        self.top, self.bottom = self.fix(0, self.h, self.h, self.round_y, self.rotation in (3, 8))
-        self.left, self.right = self.fix(0, self.w, self.w, self.round_x, self.rotation in (3, 6))
+        # If new image size matches previous image size then preserve previous crop rect
+        if self.w == 0 or self.w != self.prev_w or self.h != self.prev_h:
+            self.top, self.bottom = self.fix(0, self.h, self.h, self.round_y, self.rotation in (3, 8))
+            self.left, self.right = self.fix(0, self.w, self.w, self.round_x, self.rotation in (3, 6))
+        else:
+            self.top, self.bottom = self.prev_top, self.prev_bottom
+            self.left, self.right = self.prev_left, self.prev_right
         blurred = image.copy()
         mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
         self.blurred = image.copy().filter(

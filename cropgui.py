@@ -266,6 +266,7 @@ def set_busy(new_busy=True):
 
 try:
     for image_name in image_names():
+        drag.save_prev_crop()
         # load new image
         set_busy()
         image = Image.open(image_name)
@@ -279,7 +280,7 @@ try:
 
         # put image into drag object
         thumbnail = image.copy()
-        thumbnail.thumbnail((drag.w/drag.scale, drag.h/drag.scale))
+        thumbnail.thumbnail((drag.w//drag.scale, drag.h//drag.scale))
         drag.image = thumbnail
 
         # get user input
