@@ -78,7 +78,10 @@ def get_cropspec(image, corners, rotation):
     # to the dimensions here at least solves (2), and seems to produce the same
     # results as you get by manually constructing a pipeline of '-perfect'
     # command lines.
-    return "%dfx%df+%d+%d" % (w, h, l, t)
+    if image.format == "JPEG":
+        return "%dfx%df+%d+%d" % (w, h, l, t)
+    else:
+        return "%dx%d+%d+%d" % (w, h, l, t)
 
 
 def ncpus():
