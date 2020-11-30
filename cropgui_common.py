@@ -165,7 +165,7 @@ class CropTask(object):
                 if platform.system() == 'Windows': command = ["magick"]
                 if rotation != "none":
                     command += ["-rotate", rotation]
-                command += [image_name, "-crop", cropspec, target]
+                command += [image_name, "-crop", cropspec, '+repage', target]
 
             print(" ".join(command))
             subprocess.call(command)
