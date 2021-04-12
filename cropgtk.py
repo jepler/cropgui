@@ -219,8 +219,10 @@ class DragManager(DragManagerBase):
         self.loop.run()
         return self.result
 
-max_h = gdk.Screen.height() - 64*3
-max_w = gdk.Screen.width() - 64
+display = gdk.Display().get_default()
+wa = display.get_primary_monitor().get_workarea()
+max_h = wa.height - 192
+max_w = wa.width - 64
 
 class App:
     def __init__(self):
@@ -263,8 +265,8 @@ class App:
                 drag.round_x, drag.round_y = image_round(image)
                 drag.w, drag.h = image.size
                 scale = 1
-                scale = max (scale, nextPowerOf2((drag.w-1)//(max_w+1)))
-                scale = max (scale, nextPowerOf2((drag.h-1)//(max_h+1)))
+                scale = max (scale, nextPowerOf2((drag.w-1)/(max_w+1)))
+                scale = max (scale, nextPowerOf2((drag.h-1)/(max_h+1)))
                 thumbnail = image.copy()
                 thumbnail.thumbnail((drag.w//scale, drag.h//scale))
             except (IOError,) as detail:
