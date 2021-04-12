@@ -254,6 +254,7 @@ class App:
 
         prev_name = None
         for image_name in self.image_names():
+            drag.save_prev_crop()
             self['window1'].set_title(
                 _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()
@@ -265,7 +266,7 @@ class App:
                 scale = max (scale, nextPowerOf2((drag.w-1)//(max_w+1)))
                 scale = max (scale, nextPowerOf2((drag.h-1)//(max_h+1)))
                 thumbnail = image.copy()
-                thumbnail.thumbnail((drag.w/scale, drag.h/scale))
+                thumbnail.thumbnail((drag.w//scale, drag.h//scale))
             except (IOError,) as detail:
                 m = gtk.MessageDialog(self['window1'],
                     gtk.DialogFlags.MODAL | gtk.DialogFlags.DESTROY_WITH_PARENT,
