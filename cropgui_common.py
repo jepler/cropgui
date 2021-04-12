@@ -242,6 +242,12 @@ class DragManagerBase(object):
         a, b = sorted((int(a), int(b)))
         if reverse:
             a = lim - ((((lim - a) + r - 1) // r) * r)
+            # Rotation of non-ICU-aligned images can push bounds outside
+            # the visible area, and while it might be nice to be able to
+            # expose this, I don't know how to; so, crop inwards
+            # instead.
+            if a < 0:
+                a += r
         else:
             a = (a // r) * r
         return a, b
