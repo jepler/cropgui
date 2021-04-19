@@ -1,4 +1,11 @@
 #!/bin/sh
+if [ -f "/etc/debian_version" ]; then
+ sudo apt install python3 python3-pil python3-pil.imagetk libjpeg-progs libimage-exiftool-perl
+fi
+if [ "$(grep -Ei 'fedora|redhat' /etc/*release)" ]; then
+ sudo dnf install python2-pillow libjpeg-turbo-utils pygtk2 pygtk2-libglade ImageMagick perl-Image-ExifTool python3-pillow-tk # fixes https://github.com/jepler/cropgui/issues/89
+fi
+
 PYTHON=python3
 BINDIR=$HOME/bin; LIBDIR=$HOME/lib/python SHAREDIR=$HOME/share
 
