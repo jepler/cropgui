@@ -78,7 +78,7 @@ def get_cropspec(image, corners, rotation):
     # to the dimensions here at least solves (2), and seems to produce the same
     # results as you get by manually constructing a pipeline of '-perfect'
     # command lines.
-    if image.format == "JPEG":
+    if image.format == "JPEG" or image.format == "MPO":
         return "%dfx%df+%d+%d" % (w, h, l, t)
     else:
         return "%dx%d+%d+%d" % (w, h, l, t)
@@ -148,7 +148,7 @@ class CropTask(object):
                 command = ["nice", "cp", image_name, target]
                 if platform.system() == 'Windows': command = ["copy", image_name, target]
             # JPEG crop uses jpegtran
-            elif image.format == "JPEG":
+            elif image.format == "JPEG" or image.format == "MPO":
                 command = ["nice", "jpegtran"]
                 if platform.system() == 'Windows': command = ["jpegtran"]
                 if rotation != "none":
@@ -483,7 +483,7 @@ def image_rotation(i):
 
 def image_round(i):
     """Return (horizontal block size, vertical block size)"""
-    if i.format == "JPEG":
+    if i.format == "JPEG" or i.format == "MPO":
         x = max(xsamp for _id, xsamp, ysamp, _qtable in i.layer)
         y = max(ysamp for _id, xsamp, ysamp, _qtable in i.layer)
         return x * 8, y * 8
