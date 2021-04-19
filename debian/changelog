@@ -1,4 +1,16 @@
-cropgui (0.3) UNRELEASED; urgency=medium
+cropgui (0.6~pre0) UNRELEASED; urgency=medium
+
+  * Pre-tag the next release
+
+ -- Jeff Epler <jepler@unpythonic.net>  Mon, 19 Apr 2021 07:48:04 -0500
+
+cropgui (0.5) buster; urgency=medium
+
+  * Tag a new release to help packagers
+
+ -- Jeff Epler <jepler@unpythonic.net>  Mon, 19 Apr 2021 07:44:06 -0500
+
+cropgui (0.3) stretch; urgency=medium
 
   * Tag a new release to help packagers
   * Use jpegexiforient instead of exiftool
