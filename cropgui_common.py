@@ -227,7 +227,7 @@ class DragManagerBase(object):
         blurred = image.copy()
         mult = len(self.image.mode) # replicate filter for L, RGB, RGBA
         self.blurred = image.copy().filter(
-            ImageFilter.SMOOTH_MORE).point([x/2 for x in range(256)] * mult)
+            ImageFilter.SMOOTH_MORE).point([x//2 for x in range(256)] * mult)
         self.xor = image.copy().point([x ^ 128 for x in range(256)] * mult)
         self.image_set()
         self.render()
