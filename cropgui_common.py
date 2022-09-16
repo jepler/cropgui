@@ -321,8 +321,8 @@ class DragManagerBase(object):
         image = Image.composite(self.image, self.blurred, mask)
 
         if self.show_handles:
-            dx = (r - l) / 4
-            dy = (b - t) / 4
+            dx = (r - l) / 3
+            dy = (b - t) / 3
 
             mask = Image.new('1', self.image.size, 1)
             draw = ImageDraw.Draw(mask)
@@ -331,11 +331,16 @@ class DragManagerBase(object):
             draw.line([l, b, r, b], fill=0)
             draw.line([l, t, l, b], fill=0)
             draw.line([r, t, r, b], fill=0)
+            
+            draw.line([l, t+dy, r, t+dy], fill=0)
+            draw.line([l, b-dy, r, b-dy], fill=0)
+            draw.line([l+dx, t, l+dx, b], fill=0)
+            draw.line([r-dx, t, r-dx, b], fill=0)
 
-            draw.line([l+dx, t, l+dx, t+dy, l, t+dy], fill=0)
-            draw.line([r-dx, t, r-dx, t+dy, r, t+dy], fill=0)
-            draw.line([l+dx, b, l+dx, b-dy, l, b-dy], fill=0)
-            draw.line([r-dx, b, r-dx, b-dy, r, b-dy], fill=0)
+            #draw.line([l+dx, t, l+dx, t+dy, l, t+dy], fill=0)
+            #draw.line([r-dx, t, r-dx, t+dy, r, t+dy], fill=0)
+            #draw.line([l+dx, b, l+dx, b-dy, l, b-dy], fill=0)
+            #draw.line([r-dx, b, r-dx, b-dy, r, b-dy], fill=0)
 
             image = Image.composite(image, self.xor, mask)
         return image

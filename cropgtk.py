@@ -318,10 +318,13 @@ class App:
             for i in sys.argv[1:]: yield i
         else:
             c = filechooser.Chooser(_("Select images to crop"), self['window1'])
+            lastdir = None
             while 1:
-                files = c.run()
+                files = c.run(lastdir)
                 if not files: break
-                for i in files: yield i
+                for i in files:
+                    lastdir = os.path.dirname(i)
+                    yield i
 
     def output_name(self, image_name, image_type, chooser=False, prev_name=None):
         image_name = os.path.abspath(image_name)
