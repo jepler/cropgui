@@ -79,7 +79,8 @@ class BaseChooser:
         self.dialog = dialog = \
             gtk.FileChooserDialog(title, parent, self.mode, self.buttons)
 
-    def run(self):
+    def run(self, initdir = None):
+        if initdir: self.dialog.set_current_folder(initdir)
         self.dialog.show()
         response = self.dialog.run()
         self.dialog.hide()
