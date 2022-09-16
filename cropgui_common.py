@@ -337,11 +337,6 @@ class DragManagerBase(object):
             draw.line([l+dx, t, l+dx, b], fill=0)
             draw.line([r-dx, t, r-dx, b], fill=0)
 
-            #draw.line([l+dx, t, l+dx, t+dy, l, t+dy], fill=0)
-            #draw.line([r-dx, t, r-dx, t+dy, r, t+dy], fill=0)
-            #draw.line([l+dx, b, l+dx, b-dy, l, b-dy], fill=0)
-            #draw.line([r-dx, b, r-dx, b-dy, r, b-dy], fill=0)
-
             image = Image.composite(image, self.xor, mask)
         return image
 

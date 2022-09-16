@@ -95,7 +95,7 @@ class Chooser(BaseChooser):
     buttons = (gtk.STOCK_QUIT, gtk.ResponseType.CANCEL,
                gtk.STOCK_OPEN, gtk.ResponseType.OK)
 
-    def __init__(self, title, parent, initdir = None):
+    def __init__(self, title, parent):
         BaseChooser.__init__(self, title, parent)
 
         self.dialog.set_default_response(gtk.ResponseType.OK)
