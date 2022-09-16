@@ -149,6 +149,14 @@ class DragManager(DragManagerBase):
             elif e.string == 's': self.save_and_stay()
             elif e.string in ',<': self.rotate_ccw()
             elif e.string in '.>': self.rotate_cw()
+            elif e.string in 'h': self.set_crop(self.top, self.left - self.round_x, self.right, self.bottom)
+            elif e.string in 'j': self.set_crop(self.top + self.round_y, self.left, self.right, self.bottom)
+            elif e.string in 'k': self.set_crop(self.top - self.round_y, self.left, self.right, self.bottom)
+            elif e.string in 'l': self.set_crop(self.top, self.left + self.round_x, self.right, self.bottom)
+            elif e.string in 'H': self.set_crop(self.top, self.left, self.right - 1, self.bottom)
+            elif e.string in 'J': self.set_crop(self.top, self.left, self.right, self.bottom + 1)
+            elif e.string in 'K': self.set_crop(self.top, self.left, self.right, self.bottom - 1)
+            elif e.string in 'L': self.set_crop(self.top, self.left, self.right + 1, self.bottom)
         # Don't know whether other event handlers need it too, but if
         # this doesn't return True (True prevents further handlers from
         # being invoked), a return somehow double-triggers self.done(),
