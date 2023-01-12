@@ -228,7 +228,7 @@ class DragManager(DragManagerBase):
         return self.result
 
 display = gdk.Display().get_default()
-wa = display.get_primary_monitor().get_workarea()
+wa = display.get_monitor(0).get_workarea()
 max_h = wa.height - 192
 max_w = wa.width - 64
 
