@@ -40,10 +40,24 @@ def _(s): return s  # TODO: i18n
     DRAG_BL, DRAG_B, DRAG_BR
 ) = list(range(10))
 
+
+POPULAR_FORMATS = ((1, 1), (4, 3), (3, 2), (16, 9))
+
+def closest_ratio(ratio, formats=POPULAR_FORMATS):
+    n, d = min(formats, key=lambda f: abs(f[0]/f[1]-ratio))	# find the format closest to the ratio
+    s = ratio*d-n
+    return f'{n}{s:+.2f}', d
+
 def describe_ratio(a, b):
     if a == 0 or b == 0: return "degenerate"
-    if a > b: return "%.2f:1" % (a*1./b)
-    return "1:%.2f" % (b*1./a)
+    if a > b:
+        ratio = a*1./b
+        f,d = closest_ratio(ratio)
+        return f'{ratio:.2f}:1 | {f}:{d}'
+    else:
+        ratio = b*1./a
+        f,d = closest_ratio(ratio)
+        return f'1:{ratio:.2f} | {d}:{f}'
 
 def clamp(value, low, high):
     if value < low: return low
