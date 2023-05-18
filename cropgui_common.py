@@ -418,6 +418,15 @@ class DragManagerBase(object):
             new_right = self.r0 + dx
         if self.state in (DRAG_BL, DRAG_B, DRAG_BR, DRAG_C):
             new_bottom = self.b0 + dy
+        # Keep every type of drag within the image bounds
+        if new_top < 0:
+            new_top = 0
+        if new_left < 0:
+            new_left = 0
+        if new_right >= self.w:
+            new_right = self.w-1
+        if new_bottom >= self.h:
+            new_bottom = self.h-1
         # A drag never moves left past right and so on
         if self.state != DRAG_C:
             new_top = min(self.bottom-1, new_top)
