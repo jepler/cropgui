@@ -437,10 +437,10 @@ class DragManagerBase(object):
             new_top = 0
         if new_left < 0:
             new_left = 0
-        if new_right >= self.w:
-            new_right = self.w-1
-        if new_bottom >= self.h:
-            new_bottom = self.h-1
+        if new_right > self.w:
+            new_right = self.w
+        if new_bottom > self.h:
+            new_bottom = self.h
         # A drag never moves left past right and so on
         if self.state != DRAG_C:
             new_top = min(self.bottom-1, new_top)
