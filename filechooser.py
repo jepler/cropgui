@@ -47,7 +47,11 @@ def update_preview_cb(file_chooser, preview):
         try:
             i = Image.open(filename)
             r = cropgui_common.image_rotation(i)
-            i.thumbnail((PREVIEW_SIZE, PREVIEW_SIZE), Image.Resampling.LANCZOS)
+            if hasattr(Image, 'Resampling'):
+                thumb_filter = Image.Resampling.LANCZOS
+            else:
+                thumb_filter = Image.LANCZOS
+            i.thumbnail((PREVIEW_SIZE, PREVIEW_SIZE), thumb_filter)
             i = i.convert('RGB')
             i = apply_rotation(r, i)
             try:
