@@ -86,9 +86,9 @@ def get_cropspec(image, corners, rotation):
     # Technically these parameters should straightforwardly produce perfect
     # crops, but jpegtran is broken here in two regards: (1) it doesn't
     # recognise perfect rotated crops as such, so the '-perfect' switch
-    # erroneously rejects correctly ICMU-aligned rotate-and-crop commands, and
+    # erroneously rejects correctly iMCU-aligned rotate-and-crop commands, and
     # (2) it mistakenly rounds out crops on rotated/flipped images so that even
-    # the bottom right corner is ICMU-aligned.  Sigh.  Adding the 'f' suffixes
+    # the bottom right corner is iMCU-aligned.  Sigh.  Adding the 'f' suffixes
     # to the dimensions here at least solves (2), and seems to produce the same
     # results as you get by manually constructing a pipeline of '-perfect'
     # command lines.
@@ -249,6 +249,11 @@ class DragManagerBase(object):
         self.image_set()
         self.render()
 
+    # Note that if the image is rotated so that (for the axis fix() is 
+    # examining) the original right or bottom is now at the top or left,
+    # AND the image size is not a multiple of the iMCU for that axis,  
+    # the code below "autocrops" the image to the iMCU boundary nearest the
+    # top or left (as the case may be).
     def fix(self, a, b, lim, r, reverse):
         """
         a, b: interval to fix
@@ -261,12 +266,19 @@ class DragManagerBase(object):
             a = lim - ((((lim - a) + r - 1) // r) * r)
             # Rotation of non-ICU-aligned images can push bounds outside
             # the visible area, and while it might be nice to be able to
-            # expose this, I don't know how to; so, crop inwards
-            # instead.
+            # expose this, I don't know how to; so, crop inwards instead.
             if a < 0:
                 a += r
         else:
             a = (a // r) * r
+
+        # A command line option specifies whether the left and bottom edges
+        # of the picture should also be aligned on iMCU boundaries.
+        # Note that if the image has been rotated the first pixel on this
+        # axis may be in an incomplete iMCU block; deal with this.
+        if self.round_right_and_bottom:
+                b = (b - a) // r * r + a
+
         return a, b
 
     def get_corners(self):
