@@ -144,19 +144,25 @@ class DragManager(DragManagerBase):
         if e.keyval == gdk.KEY_Escape: self.escape()
         elif e.keyval == gdk.KEY_Return: self.done()
         elif e.string:
+            if self.round_right_and_bottom:
+                b_delta = self.round_y
+                r_delta = self.round_x
+            else:
+                b_delta = r_delta = 1
             if e.string == 'n': self.escape()
             elif e.string == 'q': self.close()
             elif e.string == 's': self.save_and_stay()
             elif e.string in ',<': self.rotate_ccw()
             elif e.string in '.>': self.rotate_cw()
-            elif e.string in 'h': self.set_crop(self.top, self.left - self.round_x, self.right, self.bottom)
-            elif e.string in 'j': self.set_crop(self.top + self.round_y, self.left, self.right, self.bottom)
-            elif e.string in 'k': self.set_crop(self.top - self.round_y, self.left, self.right, self.bottom)
-            elif e.string in 'l': self.set_crop(self.top, self.left + self.round_x, self.right, self.bottom)
-            elif e.string in 'H': self.set_crop(self.top, self.left, self.right - 1, self.bottom)
-            elif e.string in 'J': self.set_crop(self.top, self.left, self.right, self.bottom + 1)
-            elif e.string in 'K': self.set_crop(self.top, self.left, self.right, self.bottom - 1)
-            elif e.string in 'L': self.set_crop(self.top, self.left, self.right + 1, self.bottom)
+            elif e.string in 'h': self.set_crop(self.top, max(0, self.left - self.round_x), self.right, self.bottom)
+            elif e.string in 'j': self.set_crop(min(self.h, self.top + self.round_y), self.left, self.right, self.bottom)
+            elif e.string in 'k': self.set_crop(max(0, self.top - self.round_y), self.left, self.right, self.bottom)
+            elif e.string in 'l': self.set_crop(self.top, min(self.h, self.left + self.round_x), self.right, self.bottom)
+            elif e.string in 'H': self.set_crop(self.top, self.left, max(0, self.right - r_delta), self.bottom)
+            elif e.string in 'J': self.set_crop(self.top, self.left, self.right, min(self.h, self.bottom + b_delta))
+            elif e.string in 'K': self.set_crop(self.top, self.left, self.right, max(0, self.bottom - b_delta))
+            elif e.string in 'L': self.set_crop(self.top, self.left, min(self.w, self.right + r_delta), self.bottom)
+
         # Don't know whether other event handlers need it too, but if
         # this doesn't return True (True prevents further handlers from
         # being invoked), a return somehow double-triggers self.done(),
@@ -261,10 +267,19 @@ class App:
     def run(self):
         drag = self.drag
         task = self.task
-
+        round_right_and_bottom = False
         prev_name = None
+
+        # Check *only* the first arg to see if it is -round-rb
+        # Undoubtedly not the politically-correct Python way to process args.
+        if sys.argv[1] == "-round-rb":
+            round_right_and_bottom = True
+            args = [arg for arg in sys.argv[0:] if arg != "-round-rb"]
+            sys.argv = args
+
         for image_name in self.image_names():
             drag.save_prev_crop()
+            drag.round_right_and_bottom = round_right_and_bottom;
             self['window1'].set_title(
                 _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()

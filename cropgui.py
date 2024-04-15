@@ -265,8 +265,15 @@ def set_busy(new_busy=True):
     app.update_idletasks()
 
 try:
+    # Check *only* the first arg to see if it is -round-rb
+    round_right_and_bottom = False
+    if sys.argv[1] == "-round-rb":
+        round_right_and_bottom = True
+        args = [arg for arg in sys.argv[0:] if arg != "-round-rb"]
+        sys.argv = args
     for image_name in image_names():
         drag.save_prev_crop()
+        drag.round_right_and_bottom = round_right_and_bottom
         # load new image
         set_busy()
         image = Image.open(image_name)
