@@ -287,6 +287,14 @@ wa = display.get_monitor(0).get_workarea()
 max_h = wa.height - 192
 max_w = wa.width - 64
 
+def get_pointer(widget):
+    window = widget.get_window()
+    if window is None:
+        return None
+    display = window.get_display()
+    pointer = display.get_default_seat().get_pointer()
+    return window.get_device_position(pointer)
+
 class App:
     def __init__(self, *, round_right_and_bottom=False, files=[]):
         self.round_right_and_bottom = round_right_and_bottom
@@ -313,7 +321,9 @@ class App:
         self.drag.busy = is_busy
         i = self['image1']
         if i:
-            self.drag.idle_motion(*i.get_pointer())
+            pointer = get_pointer(i)
+            if pointer is not None:
+                self.drag.idle_motion(pointer.x, pointer.y)
 
     def run(self):
         drag = self.drag
