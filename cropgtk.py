@@ -140,6 +140,51 @@ class DragManager(DragManagerBase):
         self.result = -1
         self.loop.quit()
 
+    # This does zoom in, in the sense that the GTK window gets twice as big.
+    # What I really want to do is to either 
+    # (a) crop the thumbnail but map the coords back to the original image;
+    # (b) show the image in a scrolled window (see, for example, 
+    #     Gtk.ScrolledWindow); or
+    # (c) see if I can define a viewport to display just the uncropped part 
+    #     of the image.
+    # But this is still useful, in that
+    # (a) in some cases the initial zoom factor could be bigger and still fit, and
+    # (b) the user can move the overly-large window around using the window manager
+    #     to get at any edge.
+    # TODO: although the GUI window automagically increases in size when
+    #       zoom("in") is called, the window doesn't shrink on zoom("out").
+    #       This should probably be fixed.
+    # TODO: it is possible the original image has disappeared.  Open in try/except block.
+    def zoom(self, in_out):
+        if in_out == "in":
+            if self.scale > 1:
+                new_scale = self.scale // 2;
+            else:
+                return
+        else:
+            new_scale = self.scale * 2;
+
+        # These values get reset below; save and restore them explicitly.
+        t, l, r, b = self.top, self.left, self.right, self.bottom
+
+        # In tests, using a copy of the original saved in run() just didn't work
+        # for (at least) rotated images.  So re-open the file.
+        image = self.copy_of_original
+        # Must reset .w and .h since those may have been "rotated".
+        self.w, self.h = image.size
+        thumbnail = image.copy()
+        thumbnail.thumbnail((self.w // new_scale, self.h // new_scale))
+        self.image = thumbnail
+        self.rotation = 1
+        rotation = self.original_rotation
+        if rotation in (3,6,8):
+            while self.rotation != rotation:
+                self.rotate_ccw()
+        self.scale = new_scale
+        self.set_crop(t, l, r, b)
+
+
+    # TODO: should the coords be limited to [min..max] here or in set_crop? 
     def key(self, w, e):
         if e.keyval == gdk.KEY_Escape: self.escape()
         elif e.keyval == gdk.KEY_Return: self.done()
@@ -162,6 +207,8 @@ class DragManager(DragManagerBase):
             elif e.string in 'J': self.set_crop(self.top, self.left, self.right, min(self.h, self.bottom + b_delta))
             elif e.string in 'K': self.set_crop(self.top, self.left, self.right, max(0, self.bottom - b_delta))
             elif e.string in 'L': self.set_crop(self.top, self.left, min(self.w, self.right + r_delta), self.bottom)
+            elif e.string == 'z': self.zoom("in")
+            elif e.string == 'Z': self.zoom("out")
 
         # Don't know whether other event handlers need it too, but if
         # this doesn't return True (True prevents further handlers from
@@ -234,6 +281,7 @@ class DragManager(DragManagerBase):
         return self.result
 
 display = gdk.Display().get_default()
+# TODO: get the monitor where the mouse is, not necessarily #0.
 wa = display.get_monitor(0).get_workarea()
 max_h = wa.height - 192
 max_w = wa.width - 64
@@ -285,6 +333,7 @@ class App:
             self.set_busy()
             try:
                 image = Image.open(image_name)
+                drag.copy_of_original = image.copy()   # Needed by zoom()
                 drag.round_x, drag.round_y = image_round(image)
                 drag.w, drag.h = image.size
                 scale = 1
@@ -305,6 +354,7 @@ class App:
             drag.image = thumbnail
             drag.rotation = 1
             rotation = image_rotation(image)
+            drag.original_rotation = rotation   # Needed by zoom()
             if rotation in (3,6,8):
                 while drag.rotation != rotation:
                     drag.rotate_ccw()
