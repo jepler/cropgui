@@ -28,6 +28,7 @@ from gi.repository import Gdk as gdk
 import filechooser
 from gi.repository import GdkPixbuf as GdkPixbuf
 
+import argparse
 import sys
 import traceback
 import imghdr
@@ -239,7 +240,9 @@ max_h = wa.height - 192
 max_w = wa.width - 64
 
 class App:
-    def __init__(self):
+    def __init__(self, *, round_right_and_bottom=False, files=[]):
+        self.round_right_and_bottom = round_right_and_bottom
+        self.files = files
         self.builder = gtk.Builder()
         self.builder.add_from_file(gladefile)
         #self.glade = gtk.glade.XML(gladefile)
@@ -267,19 +270,11 @@ class App:
     def run(self):
         drag = self.drag
         task = self.task
-        round_right_and_bottom = False
         prev_name = None
-
-        # Check *only* the first arg to see if it is -round-rb
-        # Undoubtedly not the politically-correct Python way to process args.
-        if sys.argv[1] == "-round-rb":
-            round_right_and_bottom = True
-            args = [arg for arg in sys.argv[0:] if arg != "-round-rb"]
-            sys.argv = args
 
         for image_name in self.image_names():
             drag.save_prev_crop()
-            drag.round_right_and_bottom = round_right_and_bottom;
+            drag.round_right_and_bottom = self.round_right_and_bottom
             self['window1'].set_title(
                 _("%s - CropGTK") % os.path.basename(image_name))
             self.set_busy()
@@ -337,8 +332,8 @@ class App:
             if v == -1: break # user closed app
 
     def image_names(self):
-        if len(sys.argv) > 1:
-            for i in sys.argv[1:]: yield i
+        if self.files:
+            yield from self.files
         else:
             c = filechooser.Chooser(_("Select images to crop"), self['window1'])
             lastdir = None
@@ -378,7 +373,12 @@ class App:
         elif e.lower() == "." + image_type: return r
         else: return e + "." + image_type
 
-app = App()
+parser = argparse.ArgumentParser(description="Losslessly crop images")
+parser.add_argument("-round-rb", default=False, action="store_true", dest="round_right_and_bottom", help="Round the right and bottom coordinates to MCU boundaries")
+parser.add_argument('files', metavar='FILE', nargs='*', type=str, help="Files to be cropped")
+args = parser.parse_args()
+
+app = App(round_right_and_bottom=args.round_right_and_bottom, files=args.files)
 try:
     app.run()
 finally:
