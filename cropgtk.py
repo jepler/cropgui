@@ -31,7 +31,6 @@ from gi.repository import GdkPixbuf as GdkPixbuf
 import argparse
 import sys
 import traceback
-import imghdr
 
 # otherwise, on hardy the user is shown spurious "[application] closed
 # unexpectedly" messages but denied the ability to actually "report [the]
@@ -345,7 +344,7 @@ class App:
                 m.run()
                 m.destroy()
                 continue
-            image_type = imghdr.what(image_name)
+            image_type = thumbnail.format.lower()
             drag.image = thumbnail
             drag.rotation = 1
             rotation = image_rotation(image)
