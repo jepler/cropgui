@@ -65,20 +65,17 @@ def clamp(value, low, high):
     return value
 
 def nextPowerOf2(n):
-    count = 0;
     ceiln = math.ceil(n)
-    # First ceiln in the below condition is for the
-    # case where ceiln is 0
+    # If the number already has exactly one bit set, it is a power of 2
     if (ceiln and not(ceiln & (ceiln - 1))):
         return ceiln
+    # Otherwise it's the binary number with a 1 followed by bit_length zeros
+    return 1 << ceiln.bit_length()
 
-    while (ceiln != 0):
-        ceiln >>= 1
-        count += 1
-
-    return 1 << count;
-
-
+def np2_alt(n):
+    ceiln = math.ceil(n)
+    if (ceiln and not(ceiln & (ceiln - 1))):
+        return ceiln
 def get_cropspec(image, corners, rotation):
     t, l, r, b = corners
     w = r - l
