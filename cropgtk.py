@@ -344,7 +344,7 @@ class App:
                 m.run()
                 m.destroy()
                 continue
-            image_type = thumbnail.format.lower()
+            image_type = image.format.lower()
             drag.image = thumbnail
             drag.rotation = 1
             rotation = image_rotation(image)
