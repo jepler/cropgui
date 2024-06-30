@@ -318,6 +318,7 @@ class App:
         drag = self.drag
         task = self.task
         prev_name = None
+        cropped_any_image = False
 
         for image_name in self.image_names():
             drag.save_prev_crop()
@@ -378,7 +379,10 @@ class App:
                     rotation=drag.rotation,
                     target=target,
                 ))
+                cropped_any_image = True
             if v == -1: break # user closed app
+        if not cropped_any_image:
+            raise SystemExit(1)
 
     def image_names(self):
         if self.files:
