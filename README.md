@@ -29,9 +29,9 @@ upper-left corner must be at a multiple of the iMCU blocks.
 ## PREREQUISITES
 
 cropgui is written in Python and requires the following packages:
- * Debian: python3, python3-pil, python3-pil.imagetk,
-   (python-tkinter, python-imaging, python-imaging-tk on older systems),
-   libjpeg-progs, and libimage-exiftool-perl.
+ * Debian: python3, python3-pil, python3-pil.imagetk, libjpeg-turbo-progs
+   (python-tkinter, python-imaging, python-imaging-tk, libjpeg-progs on older systems),
+   and libimage-exiftool-perl.
  * Fedora: `dnf install python2-pillow  libjpeg-turbo-utils  pygtk2 pygtk2-libglade  ImageMagick  and perl-Image-ExifTool python3-pillow-tk`.
 
 The specific external programs required are:
