@@ -72,10 +72,6 @@ def nextPowerOf2(n):
     # Otherwise it's the binary number with a 1 followed by bit_length zeros
     return 1 << ceiln.bit_length()
 
-def np2_alt(n):
-    ceiln = math.ceil(n)
-    if (ceiln and not(ceiln & (ceiln - 1))):
-        return ceiln
 def get_cropspec(image, corners, rotation):
     t, l, r, b = corners
     w = r - l
