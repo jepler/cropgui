@@ -1,3 +1,9 @@
+# Intent to move to codeberg
+
+I plan to move this repository to codeberg.org within the next few months.
+
+Issues & bugs will be transferred (to the extent that codeberg is able to do so) and then the repository here will be archived.
+
 # A GTK GUI for lossless JPEG cropping
 
 Of the pictures I'd like to put online, I've found that in 75% of the cases
