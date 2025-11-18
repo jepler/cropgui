@@ -1,8 +1,6 @@
-# Intent to move to codeberg
+# New development occurs on codeberg.org
 
-I plan to move this repository to codeberg.org within the next few months.
-
-Issues & bugs will be transferred (to the extent that codeberg is able to do so) and then the repository here will be archived.
+https://codeberg.org/jepler/cropgui
 
 # A GTK GUI for lossless JPEG cropping
 
